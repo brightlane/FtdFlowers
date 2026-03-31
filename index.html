@@ -340,3 +340,55 @@
       Order via: <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799">FloristOne / FTD</a>.
     </div>
   </footer>
+  <!-- =============================================================================== -->
+  <!--         PART 2 – LIVE RUNNING DATE LINE – NEVER STUCK, CLICKABLE TOP BAR        -->
+  <!-- =============================================================================== -->
+
+  <script>
+    // 1. All big holidays (you can add/remove)
+    const holidays = [
+      { name: "New Year's Day",   key: "newyear",     date: new Date("2026-01-01T00:00:00") },
+      { name: "Valentine's Day",  key: "valentine",   date: new Date("2026-02-14T00:00:00") },
+      { name: "Easter",           key: "easter",      date: new Date("2026-04-05T00:00:00") },
+      { name: "Mother's Day",     key: "mother",      date: new Date("2026-05-10T00:00:00") },
+      { name: "Father's Day",     key: "father",      date: new Date("2026-06-21T00:00:00") },
+      { name: "Independence Day", key: "independence",date: new Date("2026-07-04T00:00:00") },
+      { name: "Labor Day",        key: "labor",       date: new Date("2026-09-07T00:00:00") },
+      { name: "Halloween",        key: "halloween",   date: new Date("2026-10-31T00:00:00") },
+      { name: "Thanksgiving",     key: "thanksgiving",date: new Date("2026-11-26T00:00:00") },
+      { name: "Christmas",        key: "christmas",   date: new Date("2026-12-25T00:00:00") }
+    ];
+
+    // 2. Rotating FTD messages
+    const ftdScenarios = [
+      "Need FTD flowers for a funeral?",
+      "Need FTD sympathy flowers for a loss?",
+      "Need FTD get‑well flowers for the hospital?",
+      "Need FTD birthday flowers to surprise someone?",
+      "Need FTD anniversary flowers for your partner?",
+      "Need FTD romantic flowers for Valentine’s Day?",
+      "Need FTD flowers to say sorry?",
+      "Need FTD flowers to celebrate a new baby?",
+      "Need FTD corporate flowers for an office?",
+      "Need FTD flowers for the next big holiday?",
+      "Need FTD flowers for Mother’s Day?",
+      "Need FTD flowers for Christmas?",
+      "Need FTD flowers for Thanksgiving?",
+      "Need FTD flowers for New Year’s?",
+      "Need FTD flowers delivered same day?"
+    ];
+
+    let scenarioIndex = 0;
+
+    // 3. Get next 3 holidays dynamically
+    function getNext3Holidays() {
+      const now = new Date();
+      const future = holidays
+        .filter( h => h.date >= now )
+        .sort( (a, b) => a.date - b.date );
+      const all = future.concat( holidays.filter( h => h.date < now ).sort( (a, b) => a.date - b.date ) );
+      const N = 3;
+      return Array.from( {length: N} ).map( (_, i) => all[i % all.length] );
+    }
+
+    // 4. Days until (always recalculates
