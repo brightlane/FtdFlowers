@@ -345,3 +345,68 @@
       Order via: <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799">FloristOne / FTD</a>.
     </div>
   </footer>
+  <!-- =============================================================================== -->
+  <!--                            SCRIPTS: HOLIDAY + ROTATING TEXT                     -->
+  <!-- =============================================================================== -->
+
+  <script>
+    // 1. Holiday data (you can add/extend as needed)
+    const holidays = [
+      { name: "Valentine's Day",  date: new Date("2026-02-14T00:00:00") },
+      { name: "Mother's Day",     date: new Date("2026-05-10T00:00:00") },
+      { name: "Easter",           date: new Date("2026-04-05T00:00:00") },
+      { name: "Father's Day",     date: new Date("2026-06-21T00:00:00") },
+      { name: "Christmas",        date: new Date("2026-12-25T00:00:00") }
+    ];
+
+    // 2. Rotating scenario messages (heavily FTD‑focused)
+    const scenarios = [
+      "Need FTD flowers for a funeral?",
+      "Need FTD sympathy flowers for a loss?",
+      "Need FTD get‑well flowers for the hospital?",
+      "Need FTD birthday flowers to surprise someone?",
+      "Need FTD anniversary flowers for your partner?",
+      "Need FTD romantic flowers for Valentine’s Day?",
+      "Need FTD flowers to say sorry?",
+      "Need FTD flowers to celebrate a new baby?",
+      "Need FTD corporate flowers for an office?",
+      "Need FTD flowers for the next big holiday?",
+      "Need FTD funeral arrangements for a loved one?",
+      "Need FTD standing sprays or wreaths?",
+      "Need FTD sympathy baskets for a service?",
+      "Need FTD get‑well flowers for a friend?",
+      "Need FTD flowers delivered same day?",
+      "Need FTD flowers for Canada or USA?"
+    ];
+
+    let scenarioIndex = 0;
+
+    function showHolidayCountdown( bar ) {
+      const now = new Date();
+      
+      // Find the next holiday
+      const upcomingHoliday = holidays.slice().sort( (a,b) => a.date - b.date ).find( h => h.date >= now );
+      if ( !upcomingHoliday ) return;
+
+      const diffTime = upcomingHoliday.date - now;
+      const diffDays = Math.ceil( diffTime / (1000 * 60 * 60 * 24) );
+      const name = upcomingHoliday.name;
+
+      if ( diffDays > 0 ) {
+        bar.textContent = `${name} IS IN ${diffDays} DAY${diffDays !== 1 ? "S" : ""} – NEED FTD FLOWERS? CLICK HERE`;
+      } else if ( diffDays === 0 ) {
+        bar.textContent = `${name} IS TODAY – ORDER FTD FLOWERS RIGHT NOW`;
+      } else {
+        bar.textContent = `${name} HAS PASSED – CHECK BACK FOR NEXT HOLIDAY FTD FLOWERS`;
+      }
+    }
+
+    function showRotatingScenario( container ) {
+      const el = document.getElementById("ftd-message");
+      if ( el ) {
+        el.textContent = scenarios[scenarioIndex];
+        scenarioIndex = (scenarioIndex + 1) % scenarios.length;
+      }
+    }
+
+    // 3. Auto‑run
