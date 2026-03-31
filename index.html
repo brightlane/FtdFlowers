@@ -399,3 +399,404 @@
         bar.textContent = `${name} IS TODAY – ORDER FTD FLOWERS RIGHT NOW`;
       } else {
         bar.textContent = `${name} HAS PASSED – CHECK BACK FOR NEXT HOLIDAY FTD FLOW
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- SEO head -->
+  <title>FTDFlowerGifts – FTD Flowers Delivery Canada & USA (Sympathy, Funeral, Get‑Well, Any Occasion)</title>
+  <meta name="description" content="Need FTD flowers for sympathy, funeral, get‑well, birthday, or the next big holiday? Order FTD flowers fast through FloristOne for delivery to Canada & USA." />
+
+  <!-- Canonical + hreflang -->
+  <link rel="canonical" href="https://brightlane.github.io/EasterFlowerGifts/ftd/" />
+  <link rel="alternate" hreflang="en" href="https://brightlane.github.io/EasterFlowerGifts/ftd/" />
+  <link rel="alternate" hreflang="es" href="https://brightlane.github.io/EasterFlowerGifts/ftd/es/" />
+  <link rel="alternate" hreflang="fr" href="https://brightlane.github.io/EasterFlowerGifts/ftd/fr/" />
+
+  <!-- OG / Social -->
+  <meta property="og:title" content="FTDFlowerGifts – FTD Flowers for Sympathy, Funeral, Get‑Well, Any Occasion" />
+  <meta property="og:description" content="Fast FTD flower delivery via FloristOne for Canada & USA: sympathy, funeral, get‑well, birthday, romance, and holidays." />
+  <meta property="og:url" content="https://brightlane.github.io/EasterFlowerGifts/ftd/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://brightlane.github.io/EasterFlowerGifts/og-ftd.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="FTD Flowers for Sympathy, Funeral, Get‑Well & Holidays" />
+  <meta name="twitter:description" content="Fast FTD flower delivery through FloristOne for Canada & USA." />
+  <meta name="twitter:image" content="https://brightlane.github.io/EasterFlowerGifts/og-ftd.jpg" />
+
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Where can I buy FTD flowers for Canada and USA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can buy FTD flowers for Canada and USA through FTDFlowerGifts, which links directly to FloristOne's FTD collection for fast delivery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I get FTD sympathy or funeral flowers fast?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. FTD sympathy and funeral flowers can be ordered with fast or same‑day delivery options through FloristOne in many cities in Canada and USA."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are FTD flowers delivered by local florists?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. FTD flowers are delivered by local florists through FloristOne, which handles delivery to major cities in Canada and USA."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --primary: #004b98;
+      --primary-dark: #003c78;
+      --secondary: #e20613;
+      --accent: #f8e9a1;
+      --light: #f9f9ff;
+      --dark: #121212;
+      --mid: #666;
+      --radius: 16px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.15);
+      --gradient: linear-gradient(135deg, #004b98 0%, #e20613 100%);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background: var(--light);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(100% - 32px, 1100px);
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ===== Top urgency bar (holiday countdown + rotating messages) ===== */
+    .top-bar {
+      background: #e20613;
+      color: #fff;
+      padding: 6px 0;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== Sticky nav ===== */
+    .nav-outer {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+
+    .main-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      color: var(--mid);
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    /* ===== Hero section ===== */
+    .hero {
+      background: var(--gradient);
+      color: #fff;
+      padding: 60px 16px 90px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      max-width: 700px;
+      margin: 0 auto 16px;
+      opacity: 0.95;
+    }
+
+    .hero strong {
+      font-weight: 700;
+    }
+
+    .mega-cta {
+      display: inline-block;
+      background: #fff;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 14px 32px;
+      border-radius: 32px;
+      box-shadow: 0 10px 30px rgba(0,75,152,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 8px 0 0;
+      transition: var(--transition);
+    }
+
+    .mega-cta:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 16px 40px rgba(0,75,152,0.45);
+    }
+
+    /* ===== FTD scenarios section (rotating text) ===== */
+    .ftd-scenarios {
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 16px;
+      border: 1px solid #e6e6f0;
+      background: #f0f4ff;
+      border-radius: var(--radius);
+    }
+
+    #ftd-message {
+      font-size: 1.1rem;
+      color: #004b98;
+      margin-bottom: 12px;
+    }
+
+    /* ===== FAQ / SEO block ===== */
+    #help {
+      padding: 40px 16px;
+      background: #fff;
+      font-size: 0.95rem;
+      color: var(--mid);
+    }
+
+    .faq-block,
+    .seo-block {
+      margin-bottom: 16px;
+    }
+
+    .faq-block h3,
+    .seo-block h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .faq-block ul {
+      margin-left: 20px;
+    }
+
+    .faq-block li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar: holiday countdown + rotating messages -->
+  <div class="top-bar" id="top-bar">
+    COUNTING TO THE NEXT HOLIDAY
+  </div>
+
+  <!-- Sticky nav -->
+  <div class="nav-outer">
+    <div class="container">
+      <div class="main-nav">
+        <a href="#" class="logo">FTDFlowerGifts</a>
+        <div class="nav-links">
+          <a href="#hero">Home</a>
+          <a href="#rotating">Why FTD</a>
+          <a href="#help">Help</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero section -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:block;">
+        <h1>FTD Flowers Delivered Fast – Canada & USA</h1>
+        <p>
+          Need FTD flowers for sympathy, funeral, get‑well, birthday, anniversary, or the next big holiday?
+          Use this page to order FTD flowers fast through FloristOne for delivery to Canada & USA.
+        </p>
+        <p>
+          <strong>
+            FTDFlowerGifts © 2026 – Helping you send FTD flowers fast to Canada & USA through FloristOne.
+          </strong>
+        </p>
+        <div class="mega-cta">
+          Order FTD Flowers Now →
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FTD section: rotating messages -->
+  <section id="rotating" style="padding:40px 16px;background:#f0f4ff;">
+    <div class="container">
+      <h2>FTD Flowers for Any Reason</h2>
+      <p>
+        FTD flowers help you say what words can’t. Click the main button below for FTD delivery to Canada & USA.
+      </p>
+      <div class="ftd-scenarios" id="ftd-scenarios">
+        <p id="ftd-message">
+          Need flowers for a funeral?
+        </p>
+        <p style="margin-top:8px;">
+          <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799" target="_blank" rel="noopener" style="
+            display:inline-block;background:var(--gradient);color:#fff;padding:10px 24px;border-radius:24px;font-weight:600;
+          ">
+            Click here to send FTD flowers now
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Help / FAQ block -->
+  <section id="help">
+    <div class="container">
+      <h2>Common FTD Flower Questions</h2>
+
+      <div class="faq-block">
+        <h3>When should I use FTD sympathy or funeral flowers?</h3>
+        <p>FTD sympathy and funeral flowers are ideal when you want to express condolences, honor a life, or support grieving friends and family. You can buy FTD funeral flowers online for fast delivery across Canada and USA.</p>
+      </div>
+
+      <div class="faq-block">
+        <h3>Can I get FTD get‑well flowers fast?</h3>
+        <p>Yes! FTD get‑well flowers are great for hospital visits and recovery. You can often order same‑day delivery through FloristOne in major cities.</p>
+      </div>
+
+      <div class="faq-block">
+        <h3>Are FTD flowers delivered by local florists?</h3>
+        <p>Yes. FTD uses a network of local florists, and this page connects you to FloristOne, which handles FTD delivery in Canada and USA. You can order FTD flowers online and they’ll be delivered fresh.</p>
+      </div>
+
+      <!-- Tiny SEO‑style list -->
+      <div class="seo-block">
+        <h3>Occasions that work well with FTD flowers</h3>
+        <ul>
+          <li>FTD sympathy and funeral flowers</li>
+          <li>FTD get‑well flowers for hospitals</li>
+          <li>FTD birthday and anniversary bouquets</li>
+          <li>FTD romantic and Valentine’s‑style flowers</li>
+          <li>FTD holiday flowers for Christmas, Mother’s Day, etc.</li>
+          <li>FTD corporate and office flower delivery</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding:32px 16px;background:#f9f9ff;">
+    <div class="container" style="text-align:center;font-size:0.9rem;color:#666;">
+      FTDFlowerGifts © 2026 – Helping you send FTD flowers fast to Canada & USA through FloristOne.
+      <br>
+      Order via: <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799">FloristOne / FTD</a>.
+    </div>
+  </footer>
+
+  <!-- =============================================================================== -->
+  <!--                            SCRIPTS: HOLIDAY + ROTATING TEXT                     -->
+  <!-- =============================================================================== -->
+
+  <script>
+    // 1. Holiday data (you can add/extend as needed)
+    const holidays = [
+      { name: "Valentine's Day",  date: new Date("2026-02-14T00:00:00") },
+      { name: "Mother's Day",     date: new Date("2026-05-10T00:00:00") },
+      { name: "Easter",           date: new Date("2026-04-05T00:00:00") },
+      { name: "Father's Day",     date: new Date("2026-06-21T00:00:00") },
+      { name: "Christmas",        date: new Date("2026-12-25T00:00:00") }
+    ];
+
+    // 2. Rotating scenario messages (heavily FTD‑focused)
+    const scenarios = [
+      "Need FTD flowers for a funeral?",
+      "Need FTD sympathy flowers for a loss?",
+      "Need FTD get‑well flowers for the hospital?",
+      "Need FTD birthday flowers to surprise someone?",
+      "Need FTD anniversary flowers for your partner?",
+      "Need FTD romantic flowers for Valentine’s Day?",
+      "Need FTD flowers to say sorry?",
+      "Need FTD flowers to celebrate a new baby?",
+      "Need FTD corporate flowers for an office?",
+      "Need FTD holiday flowers for the next big date?",
+      "Need FTD funeral arrangements for a loved one?",
+      "Need FTD standing sprays or wreaths?",
+      "Need FTD sympathy baskets for a service?",
+      "Need FTD get‑well flowers for a friend?",
+      "Need FTD flowers delivered same day?",
+      "Need FTD flowers for Canada or USA?"
+    ];
+
+    let scenarioIndex = 0;
+
+    function showHolidayCountdown( bar ) {
+      const now = new Date();
+      
+      // Find the next holiday
+      const upcomingHoliday = holidays.slice().sort( (a,b) => a.date - b.date ).find( h => h.date >= now );
+      if ( !upcomingHoliday ) return;
+
+      const diffTime = upcomingHoliday.date - now;
+      const diffDays = Math.ceil( diffTime / (1000 * 60 * 60 * 24) );
+      const name = upcomingHoliday.name;
+
+      if ( diffDays > 0 ) {
+        bar.textContent = `${name} IS IN ${diffDays} DAY${diffDays !== 1 ? "S" : ""} – NEED FTD FLOWERS? CLICK HERE`;
+      } else if ( diffDays === 0 ) {
+        bar.textContent = `${name} IS TODAY – ORDER FTD FLOWERS RIGHT NOW`;
+      } else {
+        bar.textContent = `${name} HAS PASSED – CHECK BACK FOR NEXT HOLIDAY FTD FLOW
