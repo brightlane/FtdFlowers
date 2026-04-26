@@ -1,0 +1,29 @@
+name: Daily Blog Generator
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # every day 9 AM UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run generator
+        run: node generate-daily-blog.js
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "auto-blog-bot"
+          git config --global user.email "bot@example.com"
+          git add .
+          git commit -m "Daily blog update"
+          git push
