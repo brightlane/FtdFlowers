@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily FTD Flower Post Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body { font-family: Arial; max-width: 900px; margin: auto; padding: 20px; line-height: 1.7; }
+    .box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    .cta { background: #ffeff3; padding: 10px; display: inline-block; }
+  </style>
+</head>
+
+<body>
+
+<h1>🌸 Daily FTD Content Generator</h1>
+
+<p>This page auto-generates fresh daily content for blogs, social media, and Quora-style answers.</p>
+
+<div class="box" id="content"></div>
+
+<script>
+// 🌸 Affiliate link
+const link = "https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799";
+
+// 🌎 Data pools
+const cities = [
+  "New York", "Los Angeles", "Chicago", "Houston", "Miami",
+  "Toronto", "Vancouver", "Montreal", "Dallas", "Seattle",
+  "Boston", "Atlanta", "Denver", "Phoenix", "San Francisco"
+];
+
+const occasions = [
+  "Birthday Flowers",
+  "Sympathy Flowers",
+  "Anniversary Flowers",
+  "Get Well Soon Flowers",
+  "Romantic Roses"
+];
+
+const quoraQuestions = [
+  "What is the fastest way to send flowers today?",
+  "How do I send sympathy flowers quickly?",
+  "What is the best online flower delivery service?",
+  "Can I send flowers the same day in Canada and USA?",
+  "What flowers are best for birthdays?"
+];
+
+// 📅 Daily seed (changes every day)
+const day = new Date().getDate();
+const city = cities[day % cities.length];
+const occasion = occasions[day % occasions.length];
+const question = quoraQuestions[day % quoraQuestions.length];
+
+// 📝 Generate content
+const output = `
+<h2>🌸 Daily Flower Post</h2>
+
+<p><strong>City:</strong> ${city}</p>
+<p><strong>Occasion:</strong> ${occasion}</p>
+
+<p>
+Send fresh flowers in ${city} with fast local florist delivery. Perfect for ${occasion.toLowerCase()}.
+</p>
+
+<p class="cta">
+👉 <a href="${link}">Order Flowers in ${city}</a>
+</p>
+
+<hr>
+
+<h2>📲 Social Media Post</h2>
+<pre>
+🌸 ${occasion} in ${city}
+
+Fresh flowers delivered fast 💐
+
+👉 ${link}
+
+#Flowers #FTD #${city.replace(" ","")}
+</pre>
+
+<hr>
+
+<h2>❓ Quora Question Idea</h2>
+<p><strong>${question}</strong></p>
+
+<h3>Answer Template</h3>
+<p>
+The fastest way to send flowers is using a local florist network that offers same-day delivery in cities like ${city}. These services connect you with nearby florists so flowers are delivered fresh and quickly.
+</p>
+
+<p>
+👉 ${link}
+</p>
+
+<hr>
+
+<h2>🌍 SEO Keywords</h2>
+<ul>
+  <li>flower delivery ${city}</li>
+  <li>send flowers online</li>
+  <li>same day flowers ${city}</li>
+  <li>FTD flowers USA Canada</li>
+</ul>
+
+<h2>🌸 Conclusion</h2>
+<p>
+FTD-style flower delivery services make it easy to send flowers quickly in ${city} and across North America for any occasion.
+</p>
+
+<p><a href="${link}">Send Flowers Now</a></p>
+`;
+
+document.getElementById("content").innerHTML = output;
+</script>
+
+</body>
+</html>
