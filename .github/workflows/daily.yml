@@ -1,0 +1,25 @@
+name: Daily Blog Generator
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # runs every day
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate daily file
+        run: |
+          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content here</p></body></html>" > blog.html
+
+      - name: Commit changes
+        run: |
+          git config user.name "auto-bot"
+          git config user.email "bot@bot.com"
+          git add .
+          git commit -m "Daily update"
+          git push
