@@ -38,8 +38,8 @@ const angles = [
 ];
 
 const city     = cities[seed % cities.length];
-const occasion = occasions[(seed >> 4) % occasions.length];
-const angle    = angles[(seed >> 8) % angles.length];
+const occasion = occasions[Math.floor(seed / 100) % occasions.length];
+const angle    = angles[Math.floor(seed / 10000) % angles.length];
 const citySlug = city.toLowerCase().replace(/ /g, "-");
 const affLink  = `${AFF_BASE}&occ=${occasion.tag}`;
 const filename = `blog-${citySlug}-${occasion.slug}-${TODAY}.html`;
