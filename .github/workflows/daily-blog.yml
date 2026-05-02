@@ -10,6 +10,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -31,14 +32,17 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
 
-      - name: Run blog generator
+      - name: Run daily blog generator
         run: node generate-daily-blog.js
+
+      - name: Run multilingual Bing blast (2000 pages, 5 languages)
+        run: node ftd_bing_blast.js
 
       - name: Commit and push
         run: |
           git add .
           git diff --staged --quiet && echo "Nothing to commit" && exit 0
-          git commit -m "Daily blog update"
+          git commit -m "Daily update + Bing blast [$(date +'%Y-%m-%d')]"
           git fetch origin main
           if git rebase -X theirs origin/main; then
             git push origin main && exit 0
@@ -47,5 +51,5 @@ jobs:
           git reset --hard origin/main
           git add .
           git diff --staged --quiet && exit 0
-          git commit -m "Daily blog update (retry)"
+          git commit -m "Daily update (retry) [$(date +'%Y-%m-%d')]"
           git push origin main
