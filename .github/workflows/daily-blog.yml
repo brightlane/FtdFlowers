@@ -1,23 +1,22 @@
-name: Integrated Daily Generator
+name: Simple Daily Generator
 
 on:
-  workflow_dispatch:  # Manual 'Run' Button
+  workflow_dispatch:
   schedule:
-    - cron: "0 9 * * *"  # Runs daily at 9:00 AM
+    - cron: "0 8 * * *" # Runs an hour before the Vulture
 
 jobs:
-  # JOB 1: Your original simple logic
   simple-echo:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Generate simple file
         run: |
-          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content here</p></body></html>" > blog.html
+          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content for $(date)</p></body></html>" > blog.html
 
       - name: Commit simple change
         run: |
@@ -25,30 +24,4 @@ jobs:
           git config user.email "bot@simple.com"
           git add blog.html
           git commit -m "Simple update [$(date)]" || exit 0
-          git push
-
-  # JOB 2: The Vulture Protocol advanced logic
-  vulture-generation:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    needs: simple-echo # Ensures they don't crash into each other
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Run Vulture Script
-        run: node generate-daily-blog.js
-
-      - name: Commit pSEO files
-        run: |
-          git config user.name "vulture-bot"
-          git config user.email "bot@vulture.com"
-          git add .
-          git commit -m "Vulture Protocol Blast [$(date)]" || exit 0
           git push
