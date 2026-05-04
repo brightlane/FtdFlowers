@@ -6,23 +6,24 @@ on:
     - cron: "0 10 * * *"
 
 jobs:
-  build-and-deploy:
+  vulture-generation:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # Updated to v4
+        uses: actions/checkout@v4 # Fixes the v3 warning
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4 # Updated to v4
+        uses: actions/setup-node@v4 # Fixes the v3 warning
         with:
-          node-version: '24' # Moved to Node 24 for speed
+          node-version: '24' # Moves you to the latest stable version
 
-      - name: Install Axios
+      - name: Install Dependencies
         run: npm install axios
 
       - name: Generate 2000 Nodes
+        # This MUST match the filename you saved earlier
         run: node vulture_10k_pro.js
 
       - name: Commit & Push
@@ -30,7 +31,7 @@ jobs:
           git config --local user.name "Vulture-Bot"
           git config --local user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Vulture 10K: Hyperlocal Blast [$(date)]" || exit 0
+          git commit -m "Vulture 10K: 2000 City Blast [$(date)]" || exit 0
           git push
 
       - name: IndexNow Blast
