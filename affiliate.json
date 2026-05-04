@@ -1,23 +1,31 @@
 {
-  "program": "FloristOne",
-  "affiliate_id": "2013017799",
-  "base_url": "https://www.floristone.com/main.cfm",
-  "params": {
-    "AID": "2013017799",
-    "source_id": "aff",
-    "occ": "bs"
+  "network": {
+    "name": "FloristOne",
+    "affiliateId": "2013017799",
+    "sourceId": "aff",
+    "trackingTag": "BrightLane_MothersDay_2026"
   },
-  "site_url": "https://brightlane.github.io/FtdFlowers",
-  "supported_occasions": [
-    "mothers-day",
-    "sympathy",
-    "funeral",
-    "birthday",
-    "get-well",
-    "anniversary",
-    "romance",
-    "thank-you",
-    "new-baby"
-  ],
-  "last_updated": "2026-05-04"
+  "campaign": {
+    "year": 2026,
+    "targetDate": "2026-05-10",
+    "panicWindowActive": true,
+    "serviceFee": "0.00",
+    "competitorFee": "24.99"
+  },
+  "urls": {
+    "base": "https://brightlane.github.io/FtdFlowers/",
+    "affiliateLanding": "http://www.floristone.com/index.cfm",
+    "sitemap": "https://brightlane.github.io/FtdFlowers/sitemap.xml",
+    "llms": "https://brightlane.github.io/FtdFlowers/llms.txt"
+  },
+  "locales": {
+    "us": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia"],
+    "ca": ["Toronto", "Vancouver", "Montreal", "Calgary", "Edmonton", "Ottawa", "Winnipeg"]
+  },
+  "occasions": [
+    { "id": "md", "name": "Mother's Day", "active": true },
+    { "id": "sy", "name": "Sympathy", "active": true },
+    { "id": "bd", "name": "Birthday", "active": true },
+    { "id": "an", "name": "Anniversary", "active": true }
+  ]
 }
