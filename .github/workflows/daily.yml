@@ -1,26 +1,35 @@
 name: Daily Blog Generator
 
 on:
-  workflow_dispatch:  # <--- THIS ADDS THE "RUN WORKFLOW" BUTTON
+  workflow_dispatch:  # Manual Trigger Button
   schedule:
-    - cron: "0 9 * * *"  # Runs automatically every day
+    - cron: "0 9 * * *"  # Auto-run at 9:00 AM daily
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Added permissions to ensure the bot can write to your repo
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate daily file
-        run: |
-          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content here</p></body></html>" > blog.html
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-      - name: Commit changes
+      - name: Run Vulture Generator
+        # This runs your external script that handles the 100+ cities
+        run: node generate-daily-blog.js
+
+      - name: Commit and Push
         run: |
-          git config user.name "auto-bot"
-          git config user.email "bot@bot.com"
+          git config --local user.name "brightlane-bot"
+          git config --local user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Daily update [$(date)]" || exit 0
+          # The "|| exit 0" prevents the workflow from failing if there are no updates
+          git commit -m "Vulture Protocol Update: $(date +'%Y-%m-%d %H:%M')" || exit 0
           git push
