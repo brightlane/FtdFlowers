@@ -1,37 +1,77 @@
-<!-- START: Vulture Protocol Context Injection -->
-<div class="seasonal-context" style="border: 1px solid #ddd; padding: 15px; background: #fff; border-radius: 10px; margin: 20px 0;">
-    <h4 style="margin-top: 0; color: #e20613;">🌷 Local Availability Report: May 4, 2026</h4>
-    <p style="font-size: 0.95em;">
-        As of this morning, our local florist partners in <strong>{{CITY_NAME}}</strong> have confirmed 
-        inventory for high-demand Mother's Day blooms including <strong>Peonies</strong> and 
-        <strong>Stargazer Lilies</strong>. 
-    </p>
-    <div style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #28a745;">
-        <span>●</span> Delivery Status: High Availability
-    </div>
-</div>
+const fs = require('fs');
+const path = require('path');
 
-<!-- START: Competitive Arbitrage Component -->
-<section id="transparency" style="background: #eef2f7; padding: 25px; border-radius: 12px; margin: 30px 0;">
-    <h3>The BrightLane Difference vs. Big Box Floral</h3>
-    <p>Searching for flower delivery in {{CITY_NAME}} often leads to "hidden fees" at the final checkout screen. Here is how we compare for May 10, 2026:</p>
-    
-    <table style="width: 100%; border-collapse: collapse; background: white;">
-        <tr style="border-bottom: 1px solid #eee;">
-            <th style="padding: 10px; text-align: left;">Feature</th>
-            <th style="padding: 10px;">FTD / ProFlowers</th>
-            <th style="padding: 10px; color: #004b98;">BrightLane</th>
-        </tr>
-        <tr>
-            <td style="padding: 10px;">Service Fee</td>
-            <td style="padding: 10px; color: #888;">$15.00 - $24.99</td>
-            <td style="padding: 10px; font-weight: bold;">$0.00</td>
-        </tr>
-        <tr>
-            <td style="padding: 10px;">Hand-Delivered</td>
-            <td style="padding: 10px; color: #888;">Often Boxed</td>
-            <td style="padding: 10px; font-weight: bold;">100% Guaranteed</td>
-        </tr>
-    </table>
-</section>
-<!-- END: Vulture Protocol Context Injection -->
+// Load your centralized config
+const config = JSON.parse(fs.readFileSync('./affiliate.json', 'utf8'));
+
+const cities = config.locales.ca.concat(config.locales.us);
+const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+function runVultureGenerator() {
+    const outputDir = './blog';
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+
+    cities.forEach(city => {
+        // This is where the "Run" happens - replacing the placeholders
+        const template = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Flower Delivery in ${city} | No Fees | BrightLane</title>
+            <style>
+                body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                .btn { display: inline-block; background: #e20613; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <!-- START: Vulture Protocol Context Injection -->
+            <div class="seasonal-context" style="border: 1px solid #ddd; padding: 15px; background: #fff; border-radius: 10px; margin: 20px 0;">
+                <h4 style="margin-top: 0; color: #e20613;">🌷 Local Availability Report: ${today}</h4>
+                <p style="font-size: 0.95em;">
+                    As of this morning, our local florist partners in <strong>${city}</strong> have confirmed 
+                    inventory for high-demand Mother's Day blooms including <strong>Peonies</strong> and 
+                    <strong>Stargazer Lilies</strong>. 
+                </p>
+                <div style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #28a745;">
+                    <span>●</span> Delivery Status: High Availability in ${city}
+                </div>
+            </div>
+
+            <section id="transparency" style="background: #eef2f7; padding: 25px; border-radius: 12px; margin: 30px 0;">
+                <h3>The BrightLane Difference in ${city} vs. Big Box Floral</h3>
+                <p>Searching for flower delivery in ${city} often leads to "hidden fees" at the final checkout screen. Here is how we compare for May 10, 2026:</p>
+                
+                <table>
+                    <tr style="background: #f4f4f4;">
+                        <th>Feature</th>
+                        <th>FTD / ProFlowers</th>
+                        <th style="color: #004b98;">BrightLane</th>
+                    </tr>
+                    <tr>
+                        <td>Service Fee</td>
+                        <td style="color: #888;">$15.00 - $24.99</td>
+                        <td style="font-weight: bold; color: green;">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Hand-Delivered</td>
+                        <td style="color: #888;">Often Boxed</td>
+                        <td style="font-weight: bold;">100% Guaranteed</td>
+                    </tr>
+                </table>
+
+                <a href="${config.network.affiliateLanding}?AffiliateID=${config.network.affiliateId}&occ=md" class="btn">
+                    Order Mother's Day Flowers in ${city}
+                </a>
+            </section>
+        </body>
+        </html>`;
+
+        const fileName = `flower-delivery-${city.toLowerCase().replace(/\s+/g, '-')}.html`;
+        fs.writeFileSync(path.join(outputDir, fileName), template);
+        console.log(`✅ Processed: ${city}`);
+    });
+}
+
+runVultureGenerator();
