@@ -1,8 +1,9 @@
 name: Daily Blog Generator
 
 on:
+  workflow_dispatch:  # <--- THIS ADDS THE "RUN WORKFLOW" BUTTON
   schedule:
-    - cron: "0 9 * * *"  # runs every day
+    - cron: "0 9 * * *"  # Runs automatically every day
 
 jobs:
   build:
@@ -21,5 +22,5 @@ jobs:
           git config user.name "auto-bot"
           git config user.email "bot@bot.com"
           git add .
-          git commit -m "Daily update"
+          git commit -m "Daily update [$(date)]" || exit 0
           git push
