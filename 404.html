@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Page Not Found | FTD Flowers</title>
+  <title>Page Not Found | FloristOne Flowers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Optional: prevent indexing of 404 page -->
+  <!-- prevent indexing of 404 page -->
   <meta name="robots" content="noindex">
 
   <style>
@@ -35,25 +35,37 @@
     p {
       color: #666;
     }
-    a {
+    .btn {
       display: inline-block;
       margin-top: 20px;
       padding: 12px 20px;
-      background: #27ae60;
-      color: #fff;
       text-decoration: none;
       border-radius: 5px;
+      font-weight: bold;
+      transition: background 0.3s ease;
     }
-    a:hover {
+    .btn-home {
+      background: #27ae60;
+      color: #fff;
+    }
+    .btn-home:hover {
       background: #219150;
+    }
+    .btn-shop {
+      background: #3498db;
+      color: #fff;
+      margin-left: 10px;
+    }
+    .btn-shop:hover {
+      background: #2980b9;
     }
   </style>
 
   <script>
-    // Optional: redirect after 5 seconds
+    // Redirect to your site root after 10 seconds (increased from 5 to allow reading)
     setTimeout(function () {
-      window.location.href = "/FtdFlowers/";
-    }, 5000);
+      window.location.href = "https://brightlane.github.io/";
+    }, 10000);
   </script>
 </head>
 <body>
@@ -61,8 +73,14 @@
     <h1>404</h1>
     <h2>Oops! Page not found</h2>
     <p>The page you’re looking for doesn’t exist or has been moved.</p>
-    <a href="/FtdFlowers/">Go back home</a>
-    <p style="font-size:12px; margin-top:15px;">Redirecting to homepage in 5 seconds...</p>
+    
+    <!-- Link to your GitHub Pages Root -->
+    <a href="https://brightlane.github.io/" class="btn btn-home">Go back home</a>
+    
+    <!-- Affiliate Link: ID 2013017799 -->
+    <a href="https://www.floristone.com/main.cfm?affiliate_id=2013017799&source_id=aff&occ=cm" class="btn btn-shop">Shop Flowers</a>
+    
+    <p style="font-size:12px; margin-top:15px; color:#999;">Redirecting to homepage in 10 seconds...</p>
   </div>
 </body>
 </html>
