@@ -1,55 +1,32 @@
-name: Integrated Daily Generator
+name: Vulture 10K Hyperlocal Expansion
 
 on:
-  workflow_dispatch:  # <--- THIS IS YOUR MANUAL "RUN" BUTTON
+  workflow_dispatch: # This gives you the manual "Run" button
   schedule:
-    - cron: "0 9 * * *"  # Runs automatically at 9:00 AM daily
+    - cron: "0 10 * * *" # Runs every morning automatically
 
 jobs:
-  # JOB 1: Your original simple logic
-  simple-update:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Generate simple file
-        run: |
-          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content here - Updated $(date)</p></body></html>" > blog.html
-
-      - name: Commit simple change
-        run: |
-          git config user.name "simple-bot"
-          git config user.email "bot@simple.com"
-          git add blog.html
-          git commit -m "Simple update [$(date)]" || exit 0
-          git push
-
-  # JOB 2: Your advanced Vulture Protocol (Node.js) logic
-  vulture-generation:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    needs: simple-update # Wait for Job 1 to finish to avoid git errors
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Run Vulture Script
-        # This executes the .js file that creates your 100+ city pages
-        run: node generate-daily-blog.js
+      - name: Generate 2000 Nodes
+        # This is where the magic happens
+        run: node vulture_10k_pro.js
 
-      - name: Commit pSEO files
+      - name: Deploy to GitHub Pages
         run: |
-          git config user.name "vulture-bot"
-          git config user.email "bot@vulture.com"
+          git config --local user.name "Vulture-Bot"
+          git config --local user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Vulture Protocol Blast [$(date)]" || exit 0
+          git commit -m "Vulture 10K: Hyperlocal Blast [$(date)]" || exit 0
           git push
