@@ -1,101 +1,76 @@
-// ... (Your previous code above)
+const fs = require('fs');
+const path = require('path');
 
-// ══════════════════════════════════════════════════════════
-//  RELATED POSTS (3 links to other occasions — same city)
-// ══════════════════════════════════════════════════════════
-const relatedOccs = occasions
-  .filter(o => o.slug !== occasion.slug)
-  .sort(() => 0.5 - Math.random()) // Shuffle for variety
-  .slice(0, 3);
+// 1. Define the missing 'occasions' data (The Fix)
+const occasions = [
+    { name: "Mother's Day", slug: "mothers-day-delivery-2026", code: "md", emoji: "🌷", headline: "Last-Minute Mother's Day Flowers: $0 Service Fees" },
+    { name: "Sympathy", slug: "sympathy-flower-delivery", code: "sy", emoji: "🕊️", headline: "Express Sympathy & Funeral Flowers - Hand Delivered" },
+    { name: "Birthday", slug: "birthday-flower-delivery", code: "bd", emoji: "🎂", headline: "Same-Day Birthday Delivery & Surprise Gifts" },
+    { name: "Anniversary", slug: "anniversary-roses-delivery", code: "an", emoji: "💍", headline: "Romantic Anniversary Roses - Premium Quality" }
+];
 
-const relatedHTML = relatedOccs.map(ro => {
-  // Generates a link to a theoretical sibling page (good for internal linking)
-  const roSlug = `blog-${citySlug}-${ro.slug}-${angle.label}-${TODAY}.html`;
-  return `<li><a href="${roSlug}">${ro.name} in ${city}</a></li>`;
-}).join("");
+// 2. Reference the occasions (Fixes the Line 6 ReferenceError)
+const relatedOccs = occasions;
 
-// ══════════════════════════════════════════════════════════
-//  HTML TEMPLATE
-// ══════════════════════════════════════════════════════════
-const html = `<!DOCTYPE html>
+const FTD_CONFIG = {
+    baseUrl: 'https://brightlane.github.io/FtdFlowers/',
+    affiliateBase: 'http://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799',
+    year: 2026
+};
+
+// 3. The Generator Logic
+function generateBlog() {
+    const today = new Date().toISOString().split('T')[0];
+    const outputDir = './blog';
+
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir);
+    }
+
+    relatedOccs.forEach(occ => {
+        const fileName = `${today}-${occ.slug}.html`;
+        const filePath = path.join(outputDir, fileName);
+
+        const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${angle.title(occasion, city)}</title>
-    <meta name="description" content="${angle.meta(occasion, city)}">
-    <link rel="canonical" href="${canonical}">
+    <title>${occ.headline} | BrightLane ${FTD_CONFIG.year}</title>
+    <meta name="description" content="Get ${occ.name} flowers delivered same-day. No service fees. Hand-delivered for May 10, 2026.">
     <style>
-        :root { --primary: #004b98; --accent: #e20613; --text: #333; --bg: #fdfdfd; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; border: 1px solid #eee; }
-        h1 { color: var(--primary); font-size: 2.2rem; line-height: 1.2; }
-        h2 { color: var(--primary); margin-top: 30px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .cta-box { background: #f0f7ff; border: 2px dashed var(--primary); padding: 30px; text-align: center; margin: 40px 0; border-radius: 12px; }
-        .btn { display: inline-block; background: var(--accent); color: white; padding: 15px 35px; text-decoration: none; font-weight: bold; border-radius: 50px; font-size: 1.2rem; }
-        .fact-box { background: #fff9e6; border-left: 5px solid #f39c12; padding: 20px; margin: 20px 0; font-style: italic; }
-        footer { margin-top: 50px; font-size: 0.9rem; color: #777; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
-        .related { background: #fafafa; padding: 20px; border-radius: 8px; margin-top: 40px; }
+        body{font-family:system-ui; line-height:1.6; max-width:800px; margin:auto; padding:20px; background:#f9f9ff;}
+        .promo-banner{background:#e20613; color:#white; padding:15px; text-align:center; border-radius:8px; font-weight:bold; color:white;}
+        .btn{display:inline-block; background:#004b98; color:white; padding:15px 30px; text-decoration:none; border-radius:50px; font-weight:bold; margin-top:20px;}
     </style>
 </head>
 <body>
-
-<div class="container">
-    <p><strong>Local Delivery Update:</strong> ${TODAY} in ${city}</p>
-    <h1>${angle.h1(occasion, city)} ${occasion.emoji}</h1>
+    <div class="promo-banner">🚨 2026 UPDATE: All Service Fees Waived - Save $24.99 vs FTD</div>
     
-    <p>${angle.intro(occasion, city)}</p>
+    <h1>${occ.emoji} ${occ.headline}</h1>
+    <p>Published: ${today}</p>
+    
+    <p>Finding reliable ${occ.name} delivery in ${FTD_CONFIG.year} shouldn't come with hidden checkout fees. While legacy brands like FTD and ProFlowers add "service" and "handling" charges at the final step, BrightLane offers <strong>Radical Transparency</strong>.</p>
+    
+    <h2>Why Choose BrightLane for ${occ.name}?</h2>
+    <ul>
+        <li><strong>$0 Service Fees:</strong> The price you see is the price you pay.</li>
+        <li><strong>Hand-Delivered:</strong> We utilize a network of 10,000+ local florists. No "flowers in a box" via FedEx.</li>
+        <li><strong>Same-Day Reliability:</strong> Orders placed before 1:00 PM local time are delivered today.</li>
+    </ul>
 
-    <div class="cta-box">
-        <h3>Order ${occasion.name} for ${city}</h3>
-        <p>Guaranteed Same-Day Delivery | $0 Service Fees | From $29.99</p>
-        <a href="${affLink}" class="btn">Shop ${occasion.name} Now →</a>
-    </div>
+    <a href="${FTD_CONFIG.affiliateBase}&occ=${occ.code}" class="btn">Order ${occ.name} Flowers Now</a>
 
-    <h2>${angle.h2a(occasion, city)}</h2>
-    <p>${angle.bodyA(occasion, city)}</p>
-
-    <div class="fact-box">
-        <strong>Did you know?</strong> ${fact}
-    </div>
-
-    <h2>${angle.h2b(occasion, city)}</h2>
-    <p>${angle.bodyB(occasion, city)}</p>
-
-    <h2>${angle.h2c(occasion, city)}</h2>
-    <p>${angle.bodyC(occasion, city)}</p>
-
-    <div class="cta-box" style="background: var(--primary); color: white;">
-        <h3 style="color: white;">Need ${occasion.name} Fast?</h3>
-        <p>Free Delivery in ${city} is currently available for orders placed by noon.</p>
-        <a href="${affLink}" class="btn" style="background: white; color: var(--primary);">Claim Free Delivery</a>
-    </div>
-
-    <section class="faq">
-        <h2>Frequently Asked Questions</h2>
-        <p><strong>Q: ${angle.faqQ(occasion, city)}</strong><br>A: ${angle.faqA(occasion, city)}</p>
-        <p><strong>Q: ${angle.faqQ2(occasion, city)}</strong><br>A: ${angle.faqA2(occasion, city)}</p>
-    </section>
-
-    <div class="related">
-        <h3>Other Flower Delivery in ${city}</h3>
-        <ul>${relatedHTML}</ul>
-    </div>
-
-    <footer>
-        <p>&copy; ${YEAR} ${SITE_NAME}. Hand-arranged by local florists in ${city}.</p>
-    </footer>
-</div>
-
+    <p style="margin-top:50px; font-size:0.8em; color:#666;">
+        Back to <a href="${FTD_CONFIG.baseUrl}">Home</a> | Part of the BrightLane pSEO Network.
+    </p>
 </body>
 </html>`;
 
-// ══════════════════════════════════════════════════════════
-//  EXECUTION
-// ══════════════════════════════════════════════════════════
-try {
-    fs.writeFileSync(filename, html);
-    console.log(`✅ Success: Generated ${filename}`);
-} catch (err) {
-    console.error("❌ Error writing file:", err);
+        fs.writeFileSync(filePath, htmlContent);
+        console.log(`✅ Generated: ${fileName}`);
+    });
 }
+
+// Run the script
+generateBlog();
