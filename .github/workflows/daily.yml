@@ -1,4 +1,4 @@
-name: Integrated Daily Generator
+name: Vulture 10K Hyperlocal Expansion
 
 on:
   workflow_dispatch:
@@ -9,10 +9,12 @@ jobs:
   vulture-generation:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # This is the critical line
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history for a clean push
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,24 +24,18 @@ jobs:
       - name: Install Dependencies
         run: npm install axios
 
-      # STEP 1: Generate the simple blog first
+      - name: Generate 2000 Nodes
+        run: node vulture_10k_pro.js
+
       - name: Generate Simple Blog
         run: |
           echo "<html><body style='background:#0a0b10;color:white;'><h1>Daily Mother's Day Update</h1><p>Fresh floral deals for $(date)</p></body></html>" > blog.html
 
-      # STEP 2: Run the 2,000 City Vulture Pro
-      - name: Run Vulture 10K Pro
-        run: node vulture_10k_pro.js
-
-      # STEP 3: Push everything to GitHub at once
       - name: Commit & Push
         run: |
-          git config user.name "vulture-bot"
-          git config user.email "bot@brightlane.dev"
+          git config --local user.name "vulture-bot"
+          git config --local user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Vulture 10K: Blog + 2000 Cities [$(date)]" || exit 0
-          git push
-
-      # STEP 4: Index the new city pages
-      - name: IndexNow Blast
-        run: node index-blast.js
+          git add dist/*.html # Explicitly tell git to look in the dist folder
+          git commit -m "Vulture 10K: Blog + 2000 Cities [$(date)]" || echo "No changes to commit"
+          git push origin main
