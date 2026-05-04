@@ -1,9 +1,9 @@
-name: Vulture 10K Hyperlocal Expansion
+name: Integrated Daily Generator
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Manual 'Run' Button
   schedule:
-    - cron: "0 10 * * *"
+    - cron: "0 9 * * *"  # Runs daily at 9:00 AM
 
 jobs:
   vulture-generation:
@@ -11,28 +11,29 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4 # Fixes the v3 warning
+      - name: Checkout repo
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4 # Fixes the v3 warning
+        uses: actions/setup-node@v4 # Updated to v4
         with:
-          node-version: '24' # Moves you to the latest stable version
+          node-version: '24' # Moves to Node 24 to kill warnings
 
       - name: Install Dependencies
         run: npm install axios
 
-      - name: Generate 2000 Nodes
-        # This MUST match the filename you saved earlier
+      - name: Run Vulture 10K Pro
+        # This triggers your 2,000 city generation logic
         run: node vulture_10k_pro.js
 
       - name: Commit & Push
         run: |
-          git config --local user.name "Vulture-Bot"
-          git config --local user.email "bot@brightlane.dev"
+          git config user.name "vulture-bot"
+          git config user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Vulture 10K: 2000 City Blast [$(date)]" || exit 0
+          git commit -m "Vulture 10K Hyperlocal Blast [$(date)]" || exit 0
           git push
 
       - name: IndexNow Blast
+        # This tells Bing/Yandex to index the 2,000 new pages immediately
         run: node index-blast.js
