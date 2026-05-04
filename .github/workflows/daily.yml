@@ -1,19 +1,40 @@
-name: Daily Blog Generator
+name: Integrated Daily Generator
 
 on:
-  workflow_dispatch:  # Manual Trigger Button
+  workflow_dispatch:  # <--- THIS IS YOUR MANUAL "RUN" BUTTON
   schedule:
-    - cron: "0 9 * * *"  # Auto-run at 9:00 AM daily
+    - cron: "0 9 * * *"  # Runs automatically at 9:00 AM daily
 
 jobs:
-  build:
+  # JOB 1: Your original simple logic
+  simple-update:
     runs-on: ubuntu-latest
-    # Added permissions to ensure the bot can write to your repo
     permissions:
       contents: write
-
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate simple file
+        run: |
+          echo "<html><body><h1>Daily FTD Post</h1><p>Fresh content here - Updated $(date)</p></body></html>" > blog.html
+
+      - name: Commit simple change
+        run: |
+          git config user.name "simple-bot"
+          git config user.email "bot@simple.com"
+          git add blog.html
+          git commit -m "Simple update [$(date)]" || exit 0
+          git push
+
+  # JOB 2: Your advanced Vulture Protocol (Node.js) logic
+  vulture-generation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: simple-update # Wait for Job 1 to finish to avoid git errors
+    steps:
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -21,15 +42,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run Vulture Generator
-        # This runs your external script that handles the 100+ cities
+      - name: Run Vulture Script
+        # This executes the .js file that creates your 100+ city pages
         run: node generate-daily-blog.js
 
-      - name: Commit and Push
+      - name: Commit pSEO files
         run: |
-          git config --local user.name "brightlane-bot"
-          git config --local user.email "bot@brightlane.dev"
+          git config user.name "vulture-bot"
+          git config user.email "bot@vulture.com"
           git add .
-          # The "|| exit 0" prevents the workflow from failing if there are no updates
-          git commit -m "Vulture Protocol Update: $(date +'%Y-%m-%d %H:%M')" || exit 0
+          git commit -m "Vulture Protocol Blast [$(date)]" || exit 0
           git push
