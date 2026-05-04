@@ -1,12 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * VULTURE 10K PRO: HYPERLOCAL GENERATOR
- * Goal: Generate 2,000 unique SEO nodes with city-specific landmarks.
- */
+// --- CONFIG ---
+const DOMAIN = "https://brightlane.github.io/FtdFlowers";
 
-// --- DATABASE: 2,000 CITIES, REGIONS, AND HYPERLOCAL LANDMARKS ---
+// --- DATABASE: CITIES, REGIONS, AND HYPERLOCAL LANDMARKS ---
 const baseCities = [
     "New York|NY|near Central Park", "Los Angeles|CA|near the Hollywood Sign", "Chicago|IL|along the Magnificent Mile", 
     "Houston|TX|near the Museum District", "Toronto|ON|near the CN Tower", "Phoenix|AZ|near Camelback Mountain", 
@@ -28,7 +26,6 @@ const baseCities = [
     "London|ON|near Victoria Park", "Victoria|BC|at the Inner Harbour", "Saskatoon|SK|along the South Saskatchewan River"
 ];
 
-// Logic to expand the database to 2,000 for high-velocity pSEO
 const fullCityList = [];
 for (let i = 0; i < 2000; i++) {
     fullCityList.push(baseCities[i % baseCities.length]);
@@ -40,60 +37,58 @@ if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 function generateProNodes() {
     console.log("🦅 VULTURE 10K PRO: Generating 2,000 Hyperlocal Nodes...");
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const isoDate = new Date().toISOString().split('T')[0];
+
+    let sitemapEntries = [];
 
     fullCityList.forEach((entry, index) => {
         const [name, region, landmark] = entry.split('|');
-        // Unique slug to ensure all 2,000 pages are unique files
-        const slug = `flower-delivery-${name.toLowerCase().replace(/\s+/g, '-')}-${region.toLowerCase()}-${index}`;
+        const filename = `flower-delivery-${name.toLowerCase().replace(/\s+/g, '-')}-${region.toLowerCase()}-${index}.html`;
+        const slug = `dist/${filename}`;
         
+        // 1. Generate HTML Content
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mother's Day Flower Delivery in ${name}, ${region} | Delivering ${landmark}</title>
-    <meta name="description" content="Send fresh Mother's Day flowers to ${name}, ${region}. Hand-delivered by local florists ${landmark}. Same-day delivery available.">
     <style>
         :root { --primary: #ff4757; --bg: #0a0b10; --card: #11141d; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.6; text-align: center; margin: 0; }
-        .hero { padding: 80px 20px; background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%); border-bottom: 1px solid #1a1c23; }
-        .badge { color: #2ed573; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; margin-bottom: 10px; display: block; }
-        h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin: 10px 0; color: #fff; line-height: 1.1; }
-        .landmark-text { color: var(--primary); font-weight: bold; }
-        .cta { display: inline-block; background: var(--primary); color: white; padding: 20px 50px; border-radius: 50px; font-weight: 900; text-decoration: none; font-size: 1.3rem; margin-top: 30px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3); }
-        .cta:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(255, 71, 87, 0.5); }
-        .features { display: flex; justify-content: center; gap: 20px; margin-top: 40px; flex-wrap: wrap; font-size: 0.9rem; color: #a4b0be; }
-        .footer { padding: 60px 20px; font-size: 0.8rem; color: #57606f; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; line-height: 1.6; text-align: center; margin: 0; }
+        .hero { padding: 80px 20px; background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%); }
+        .cta { display: inline-block; background: var(--primary); color: white; padding: 20px 50px; border-radius: 50px; font-weight: 900; text-decoration: none; margin-top: 30px; }
     </style>
 </head>
 <body>
     <section class="hero">
-        <span class="badge">Verified Local ${region} Florist Network</span>
-        <h1>Mother's Day Flowers <br>in ${name}, ${region}</h1>
-        <p>Premium artisan bouquets hand-delivered <span class="landmark-text">${landmark}</span> and throughout the <strong>${name}</strong> metro area.</p>
-        
-        <div class="features">
-            <span>✅ Hand-Delivered</span>
-            <span>✅ Same-Day Available</span>
-            <span>✅ No Hidden Box Fees</span>
-        </div>
-
+        <h1>Mother's Day Flowers in ${name}, ${region}</h1>
+        <p>Premium artisan bouquets hand-delivered <span style="color:var(--primary)">${landmark}</span>.</p>
         <a href="https://www.floristone.com/index.cfm?AffiliateID=2013017799&occ=md" class="cta">ORDER FOR ${name.toUpperCase()}</a>
-        
-        <p style="margin-top: 25px; font-weight: 500;">Guaranteed Delivery by Sunday, May 10th</p>
     </section>
-
-    <footer class="footer">
-        <p>Serving the ${name} community with radical transparency. <br> 
-        Part of the Brightlane Affiliate Network. Updated ${today}.</p>
-    </footer>
+    <footer style="padding:40px; font-size:0.8rem; color:#57606f;">Updated ${today}</footer>
 </body>
 </html>`;
 
-        fs.writeFileSync(path.join(outputDir, `${slug}.html`), html);
+        fs.writeFileSync(path.join(outputDir, filename), html);
+
+        // 2. Add to Sitemap List
+        sitemapEntries.push(`  <url>
+    <loc>${DOMAIN}/${slug}</loc>
+    <lastmod>${isoDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`);
     });
 
-    console.log(`✅ SUCCESS: 2,000 nodes generated in the /dist folder.`);
+    // 3. Write Sitemap.xml
+    const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapEntries.join('\n')}
+</urlset>`;
+
+    fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapContent);
+    console.log(`✅ SUCCESS: 2,000 nodes generated and sitemap.xml updated.`);
 }
 
 generateProNodes();
