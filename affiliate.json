@@ -3,20 +3,21 @@
   "affiliate_id": "2013017799",
   "base_url": "https://www.floristone.com/main.cfm",
   "params": {
-    "occ": "cm",
-    "source_id": "aff"
+    "AID": "2013017799",
+    "source_id": "aff",
+    "occ": "bs"
   },
-  "site_url": "https://brightlane.github.io/",
+  "site_url": "https://brightlane.github.io/FtdFlowers",
   "supported_occasions": [
     "mothers-day",
     "sympathy",
+    "funeral",
     "birthday",
     "get-well",
     "anniversary",
     "romance",
     "thank-you",
-    "new-baby",
-    "christmas"
+    "new-baby"
   ],
-  "last_updated": "2026-05-02"
+  "last_updated": "2026-05-04"
 }
