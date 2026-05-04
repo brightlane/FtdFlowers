@@ -1,67 +1,30 @@
-const fs = require('fs');
-const path = require('path');
+name: Daily Blog Generator
+on:
+  workflow_dispatch: # <--- THIS ADDS THE 'RUN' BUTTON
+  schedule:
+    - cron: '0 9 * * *' # Runs every morning at 9AM
 
-// 1. Bulletproof Config Loading
-let config;
-try {
-    config = JSON.parse(fs.readFileSync('./affiliate.json', 'utf8'));
-} catch (err) {
-    console.error("❌ ERROR: Could not find or read affiliate.json. Make sure it is in the same folder.");
-    process.exit(1);
-}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-// 2. Combine Cities
-const cities = config.locales.ca.concat(config.locales.us);
-const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      - name: Install Dependencies
+        run: npm install axios # Required if you use the Bing Blast script
 
-function runVultureGenerator() {
-    const outputDir = './blog';
-    
-    // Ensure blog directory exists
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-    }
+      - name: Run Vulture Generator
+        run: node generate-daily-blog.js
 
-    console.log(`🚀 Starting Vulture Protocol for ${cities.length} cities...`);
-
-    cities.forEach(city => {
-        const template = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Flower Delivery in ${city} | No Fees | BrightLane</title>
-    <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background: #f4f7f6; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        .btn { display: inline-block; background: #e20613; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; text-align:center; width: 100%; box-sizing: border-box; }
-        .status { color: #28a745; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h4 style="color: #e20613; margin-top: 0;">🌷 Local Availability Report: ${today}</h4>
-        <p>As of this morning, local florists in <strong>${city}</strong> confirmed inventory for Mother's Day: <span class="status">High Availability</span>.</p>
-
-        <section style="background: #eef2f7; padding: 20px; border-radius: 8px;">
-            <h3>${city} Price Transparency</h3>
-            <table>
-                <tr style="background: #eee;"><th>Feature</th><th>Legacy Brands</th><th>BrightLane</th></tr>
-                <tr><td>Service Fee</td><td>$15 - $25</td><td style="color:green; font-weight:bold;">$0.00</td></tr>
-                <tr><td>Delivery</td><td>Boxed/FedEx</td><td style="font-weight:bold;">Local Hand-Delivered</td></tr>
-            </table>
-            <a href="${config.urls.affiliateLanding}?AffiliateID=${config.network.affiliateId}&occ=md" class="btn">Order in ${city} Now</a>
-        </section>
-    </div>
-</body>
-</html>`;
-
-        const fileName = `flower-delivery-${city.toLowerCase().replace(/\s+/g, '-')}.html`;
-        fs.writeFileSync(path.join(outputDir, fileName), template);
-    });
-
-    console.log(`✅ Success! Generated ${cities.length} pages in /blog folder.`);
-}
-
-runVultureGenerator();
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Vulture Protocol: Daily Blast [$(date +'%Y-%m-%d')]" || exit 0
+          git push
