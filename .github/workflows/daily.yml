@@ -1,9 +1,9 @@
 name: Vulture 10K Hyperlocal Expansion
 
 on:
-  workflow_dispatch: # This gives you the manual "Run" button
+  workflow_dispatch:
   schedule:
-    - cron: "0 10 * * *" # Runs every morning automatically
+    - cron: "0 10 * * *"
 
 jobs:
   build-and-deploy:
@@ -12,21 +12,26 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4 # Updated to v4
         with:
-          node-version: '20'
+          node-version: '24' # Moved to Node 24 for speed
+
+      - name: Install Axios
+        run: npm install axios
 
       - name: Generate 2000 Nodes
-        # This is where the magic happens
         run: node vulture_10k_pro.js
 
-      - name: Deploy to GitHub Pages
+      - name: Commit & Push
         run: |
           git config --local user.name "Vulture-Bot"
           git config --local user.email "bot@brightlane.dev"
           git add .
           git commit -m "Vulture 10K: Hyperlocal Blast [$(date)]" || exit 0
           git push
+
+      - name: IndexNow Blast
+        run: node index-blast.js
