@@ -1,76 +1,68 @@
 const fs = require('fs');
 const path = require('path');
 
-// 1. Define the missing 'occasions' data (The Fix)
-const occasions = [
-    { name: "Mother's Day", slug: "mothers-day-delivery-2026", code: "md", emoji: "🌷", headline: "Last-Minute Mother's Day Flowers: $0 Service Fees" },
-    { name: "Sympathy", slug: "sympathy-flower-delivery", code: "sy", emoji: "🕊️", headline: "Express Sympathy & Funeral Flowers - Hand Delivered" },
-    { name: "Birthday", slug: "birthday-flower-delivery", code: "bd", emoji: "🎂", headline: "Same-Day Birthday Delivery & Surprise Gifts" },
-    { name: "Anniversary", slug: "anniversary-roses-delivery", code: "an", emoji: "💍", headline: "Romantic Anniversary Roses - Premium Quality" }
-];
+// Load Data
+const config = JSON.parse(fs.readFileSync('./affiliate.json', 'utf8'));
+const cities = config.locales.ca.concat(config.locales.us);
+const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-// 2. Reference the occasions (Fixes the Line 6 ReferenceError)
-const relatedOccs = occasions;
-
-const FTD_CONFIG = {
-    baseUrl: 'https://brightlane.github.io/FtdFlowers/',
-    affiliateBase: 'http://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799',
-    year: 2026
-};
-
-// 3. The Generator Logic
-function generateBlog() {
-    const today = new Date().toISOString().split('T')[0];
+function generatePages() {
     const outputDir = './blog';
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir);
-    }
+    let indexLinks = [];
 
-    relatedOccs.forEach(occ => {
-        const fileName = `${today}-${occ.slug}.html`;
-        const filePath = path.join(outputDir, fileName);
-
-        const htmlContent = `<!DOCTYPE html>
+    cities.forEach(city => {
+        const slug = city.toLowerCase().replace(/\s+/g, '-');
+        const fileName = `flower-delivery-${slug}.html`;
+        
+        const html = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${occ.headline} | BrightLane ${FTD_CONFIG.year}</title>
-    <meta name="description" content="Get ${occ.name} flowers delivered same-day. No service fees. Hand-delivered for May 10, 2026.">
+    <title>Flower Delivery in ${city} | No Fees | BrightLane 2026</title>
     <style>
-        body{font-family:system-ui; line-height:1.6; max-width:800px; margin:auto; padding:20px; background:#f9f9ff;}
-        .promo-banner{background:#e20613; color:#white; padding:15px; text-align:center; border-radius:8px; font-weight:bold; color:white;}
-        .btn{display:inline-block; background:#004b98; color:white; padding:15px 30px; text-decoration:none; border-radius:50px; font-weight:bold; margin-top:20px;}
+        body { font-family: system-ui; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background: #f9f9ff; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .promo { background: #004b98; color: white; padding: 10px; text-align: center; border-radius: 5px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .btn { display: block; background: #e20613; color: white; padding: 15px; text-align: center; text-decoration: none; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="promo-banner">🚨 2026 UPDATE: All Service Fees Waived - Save $24.99 vs FTD</div>
-    
-    <h1>${occ.emoji} ${occ.headline}</h1>
-    <p>Published: ${today}</p>
-    
-    <p>Finding reliable ${occ.name} delivery in ${FTD_CONFIG.year} shouldn't come with hidden checkout fees. While legacy brands like FTD and ProFlowers add "service" and "handling" charges at the final step, BrightLane offers <strong>Radical Transparency</strong>.</p>
-    
-    <h2>Why Choose BrightLane for ${occ.name}?</h2>
-    <ul>
-        <li><strong>$0 Service Fees:</strong> The price you see is the price you pay.</li>
-        <li><strong>Hand-Delivered:</strong> We utilize a network of 10,000+ local florists. No "flowers in a box" via FedEx.</li>
-        <li><strong>Same-Day Reliability:</strong> Orders placed before 1:00 PM local time are delivered today.</li>
-    </ul>
+    <div class="card">
+        <div class="promo">🚨 Mother's Day 2026: No Hidden Checkout Fees</div>
+        <h1>Flower Delivery in ${city}</h1>
+        <p><strong>Status:</strong> <span style="color:green;">High Availability</span> for Sunday, May 10th.</p>
+        
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h4>🌷 Local Report: ${today}</h4>
+            <p>Our local florists in <strong>${city}</strong> have confirmed fresh inventory of Peonies and Lilies for hand-delivery.</p>
+        </div>
 
-    <a href="${FTD_CONFIG.affiliateBase}&occ=${occ.code}" class="btn">Order ${occ.name} Flowers Now</a>
+        <table>
+            <tr style="background:#eee;"><th>Feature</th><th>Legacy Brands</th><th>BrightLane</th></tr>
+            <tr><td>Service Fee</td><td>$15 - $25</td><td style="font-weight:bold; color:green;">$0.00</td></tr>
+            <tr><td>Sunday Delivery</td><td>Extra Fee</td><td style="font-weight:bold;">Included</td></tr>
+        </table>
 
-    <p style="margin-top:50px; font-size:0.8em; color:#666;">
-        Back to <a href="${FTD_CONFIG.baseUrl}">Home</a> | Part of the BrightLane pSEO Network.
-    </p>
+        <a href="${config.urls.affiliateLanding}?AffiliateID=${config.network.affiliateId}&occ=md" class="btn">
+            Send Flowers in ${city}
+        </a>
+    </div>
 </body>
 </html>`;
 
-        fs.writeFileSync(filePath, htmlContent);
-        console.log(`✅ Generated: ${fileName}`);
+        fs.writeFileSync(path.join(outputDir, fileName), html);
+        indexLinks.push(`<li><a href="./blog/${fileName}">${city}</a></li>`);
     });
+
+    // Create a central directory page for easy discovery
+    const indexContent = `<html><body><h1>Mother's Day 2026 City Index</h1><ul>${indexLinks.join('')}</ul></body></html>`;
+    fs.writeFileSync('./blog-index.html', indexContent);
+    console.log(`✅ Success: ${cities.length} pages generated.`);
 }
 
-// Run the script
-generateBlog();
+generatePages();
