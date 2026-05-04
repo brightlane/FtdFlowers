@@ -1,9 +1,9 @@
-name: Vulture 10K Hyperlocal Expansion
+name: Integrated Daily Generator
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 9 * * *" # Runs daily at 9:00 AM
+    - cron: "0 9 * * *"
 
 jobs:
   vulture-generation:
@@ -11,28 +11,35 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4 # Fixes v3 warning
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4 # Fixes v3 warning
+        uses: actions/setup-node@v4
         with:
-          node-version: '24' # Fixes Node 20 warning
+          node-version: '24'
 
       - name: Install Dependencies
         run: npm install axios
 
+      # STEP 1: Generate the simple blog first
+      - name: Generate Simple Blog
+        run: |
+          echo "<html><body style='background:#0a0b10;color:white;'><h1>Daily Mother's Day Update</h1><p>Fresh floral deals for $(date)</p></body></html>" > blog.html
+
+      # STEP 2: Run the 2,000 City Vulture Pro
       - name: Run Vulture 10K Pro
-        # Make sure your script name matches exactly
         run: node vulture_10k_pro.js
 
-      - name: Commit pSEO files
+      # STEP 3: Push everything to GitHub at once
+      - name: Commit & Push
         run: |
           git config user.name "vulture-bot"
-          git config user.email "bot@vulture.com"
+          git config user.email "bot@brightlane.dev"
           git add .
-          git commit -m "Vulture Protocol Blast [$(date)]" || exit 0
+          git commit -m "Vulture 10K: Blog + 2000 Cities [$(date)]" || exit 0
           git push
 
+      # STEP 4: Index the new city pages
       - name: IndexNow Blast
         run: node index-blast.js
