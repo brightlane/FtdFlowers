@@ -1,86 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Page Not Found | FloristOne Flowers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | BrightLane Flowers 2026</title>
+    
+    <!-- Automatic Redirect to Mother's Day Hub after 5 seconds -->
+    <meta http-equiv="refresh" content="5;url=https://brightlane.github.io/FtdFlowers/">
 
-  <!-- prevent indexing of 404 page -->
-  <meta name="robots" content="noindex">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      color: #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .container {
-      max-width: 500px;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 72px;
-      margin: 0;
-      color: #e74c3c;
-    }
-    h2 {
-      margin: 10px 0;
-    }
-    p {
-      color: #666;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 20px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-    .btn-home {
-      background: #27ae60;
-      color: #fff;
-    }
-    .btn-home:hover {
-      background: #219150;
-    }
-    .btn-shop {
-      background: #3498db;
-      color: #fff;
-      margin-left: 10px;
-    }
-    .btn-shop:hover {
-      background: #2980b9;
-    }
-  </style>
-
-  <script>
-    // Redirect to your site root after 10 seconds (increased from 5 to allow reading)
-    setTimeout(function () {
-      window.location.href = "https://brightlane.github.io/";
-    }, 10000);
-  </script>
+    <style>
+        body { font-family: system-ui, sans-serif; text-align: center; padding: 50px; background: #f9f9ff; color: #111; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 5px solid #e20613; }
+        h1 { color: #004b98; font-size: 3rem; margin: 0; }
+        p { font-size: 1.2rem; color: #666; }
+        .btn { display: inline-block; background: #e20613; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn:hover { background: #b30000; transform: scale(1.05); }
+        .timer { font-size: 0.9rem; color: #aaa; margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>404</h1>
-    <h2>Oops! Page not found</h2>
-    <p>The page you’re looking for doesn’t exist or has been moved.</p>
-    
-    <!-- Link to your GitHub Pages Root -->
-    <a href="https://brightlane.github.io/" class="btn btn-home">Go back home</a>
-    
-    <!-- Affiliate Link: ID 2013017799 -->
-    <a href="https://www.floristone.com/main.cfm?affiliate_id=2013017799&source_id=aff&occ=cm" class="btn btn-shop">Shop Flowers</a>
-    
-    <p style="font-size:12px; margin-top:15px; color:#999;">Redirecting to homepage in 10 seconds...</p>
-  </div>
+
+    <div class="container">
+        <h1>Oops!</h1>
+        <p>That flower must have wilted. We can't find the page you're looking for.</p>
+        
+        <div style="padding: 20px; background: #fff9e6; border-radius: 8px; margin: 20px 0;">
+            <strong>Don't miss Mother's Day!</strong><br>
+            We're still delivering hand-arranged bouquets across USA & Canada for Sunday, May 10th.
+        </div>
+
+        <a href="https://brightlane.github.io/FtdFlowers/" class="btn">Shop Mother's Day Flowers Now</a>
+        
+        <p class="timer">Redirecting you to our main floral gallery in <span id="seconds">5</span> seconds...</p>
+    </div>
+
+    <script>
+        let timeLeft = 5;
+        const timerElement = document.getElementById('seconds');
+        setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerElement.innerText = timeLeft;
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
