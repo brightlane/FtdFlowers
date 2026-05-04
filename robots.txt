@@ -1,3 +1,10 @@
 User-agent: *
 Allow: /
+# Explicitly allow bots to see your LLM optimization file
+Allow: /llms.txt
+
+# Help AI crawlers (Perplexity, GPTBot, ClaudeBot) discover your summary
+Link: <https://brightlane.github.io/FtdFlowers/llms.txt>; rel="llms"
+
+# Sitemap discovery
 Sitemap: https://brightlane.github.io/FtdFlowers/sitemap.xml
