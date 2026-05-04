@@ -1,10 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-// --- CONFIG ---
 const DOMAIN = "https://brightlane.github.io/FtdFlowers";
 
-// --- DATABASE: CITIES, REGIONS, AND HYPERLOCAL LANDMARKS ---
+// --- YOUR OWNED NETWORK ---
+const networkSites = [
+    { name: "Mother's Day Flowers", url: "https://brightlane.github.io/MothersDayFlowers/" },
+    { name: "Bouquet Flowers", url: "https://brightlane.github.io/BouquetFlowers/" },
+    { name: "Valentine's Day Flowers", url: "https://brightlane.github.io/ValentinesDayFlowers/" },
+    { name: "Send Flowers Online", url: "https://brightlane.github.io/SendFlowersOnline/" },
+    { name: "Easter Flower Gifts", url: "https://brightlane.github.io/EasterFlowerGifts/" },
+    { name: "Same Day Flowers", url: "https://brightlane.github.io/SameDayFlowers/" },
+    { name: "Christmas Flowers", url: "https://brightlane.github.io/ChristmasFlowers/" },
+    { name: "Flower Delivery", url: "https://brightlane.github.io/FlowerDelivery/" },
+    { name: "Same Day Florist", url: "https://brightlane.github.io/SameDayFlorist/" }
+];
+
 const baseCities = [
     "New York|NY|near Central Park", "Los Angeles|CA|near the Hollywood Sign", "Chicago|IL|along the Magnificent Mile", 
     "Houston|TX|near the Museum District", "Toronto|ON|near the CN Tower", "Phoenix|AZ|near Camelback Mountain", 
@@ -35,18 +46,19 @@ const outputDir = path.join(__dirname, 'dist');
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 function generateProNodes() {
-    console.log("🦅 VULTURE 10K PRO: Generating 2,000 Hyperlocal Nodes...");
+    console.log("🦅 VULTURE 10K PRO: Generating Network-Linked Nodes...");
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     const isoDate = new Date().toISOString().split('T')[0];
 
     let sitemapEntries = [];
 
+    // Pre-generate the network HTML to save processing time
+    const networkHtml = networkSites.map(s => `<a href="${s.url}" style="color:#ff4757; text-decoration:none; margin:0 10px; font-size:0.75rem;">${s.name}</a>`).join(' | ');
+
     fullCityList.forEach((entry, index) => {
         const [name, region, landmark] = entry.split('|');
         const filename = `flower-delivery-${name.toLowerCase().replace(/\s+/g, '-')}-${region.toLowerCase()}-${index}.html`;
-        const slug = `dist/${filename}`;
         
-        // 1. Generate HTML Content
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +70,7 @@ function generateProNodes() {
         body { background: var(--bg); color: var(--text); font-family: sans-serif; line-height: 1.6; text-align: center; margin: 0; }
         .hero { padding: 80px 20px; background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%); }
         .cta { display: inline-block; background: var(--primary); color: white; padding: 20px 50px; border-radius: 50px; font-weight: 900; text-decoration: none; margin-top: 30px; }
+        .network-bar { margin-top: 50px; padding: 20px; border-top: 1px solid #1a1c23; background: #0d0e14; }
     </style>
 </head>
 <body>
@@ -66,29 +79,33 @@ function generateProNodes() {
         <p>Premium artisan bouquets hand-delivered <span style="color:var(--primary)">${landmark}</span>.</p>
         <a href="https://www.floristone.com/index.cfm?AffiliateID=2013017799&occ=md" class="cta">ORDER FOR ${name.toUpperCase()}</a>
     </section>
+
+    <div class="network-bar">
+        <p style="font-size:0.8rem; color:#57606f; margin-bottom:10px;">Brightlane Floral Network:</p>
+        ${networkHtml}
+    </div>
+
     <footer style="padding:40px; font-size:0.8rem; color:#57606f;">Updated ${today}</footer>
 </body>
 </html>`;
 
         fs.writeFileSync(path.join(outputDir, filename), html);
 
-        // 2. Add to Sitemap List
         sitemapEntries.push(`  <url>
-    <loc>${DOMAIN}/${slug}</loc>
+    <loc>${DOMAIN}/dist/${filename}</loc>
     <lastmod>${isoDate}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>`);
     });
 
-    // 3. Write Sitemap.xml
     const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapEntries.join('\n')}
 </urlset>`;
 
     fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapContent);
-    console.log(`✅ SUCCESS: 2,000 nodes generated and sitemap.xml updated.`);
+    console.log(`✅ SUCCESS: 2,000 linked nodes and sitemap updated.`);
 }
 
 generateProNodes();
