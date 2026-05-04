@@ -1,55 +1,37 @@
-name: Daily Blog Generator
-on:
-  schedule:
-    - cron: "0 9 * * *"
-  workflow_dispatch:
+<!-- START: Vulture Protocol Context Injection -->
+<div class="seasonal-context" style="border: 1px solid #ddd; padding: 15px; background: #fff; border-radius: 10px; margin: 20px 0;">
+    <h4 style="margin-top: 0; color: #e20613;">🌷 Local Availability Report: May 4, 2026</h4>
+    <p style="font-size: 0.95em;">
+        As of this morning, our local florist partners in <strong>{{CITY_NAME}}</strong> have confirmed 
+        inventory for high-demand Mother's Day blooms including <strong>Peonies</strong> and 
+        <strong>Stargazer Lilies</strong>. 
+    </p>
+    <div style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #28a745;">
+        <span>●</span> Delivery Status: High Availability
+    </div>
+</div>
 
-permissions:
-  contents: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Git config
-        run: |
-          git config user.name "auto-blog-bot"
-          git config user.email "bot@brightlane.io"
-
-      - name: Pull latest
-        run: |
-          git fetch origin main
-          git reset --hard origin/main
-
-      - name: Run daily blog generator
-        run: node generate-daily-blog.js
-
-      - name: Run multilingual Bing blast (2000 pages, 5 languages)
-        run: node ftd_bing_blast.js
-
-      - name: Commit and push
-        run: |
-          git add .
-          git diff --staged --quiet && echo "Nothing to commit" && exit 0
-          git commit -m "Daily update + Bing blast [$(date +'%Y-%m-%d')]"
-          git fetch origin main
-          if git rebase -X theirs origin/main; then
-            git push origin main && exit 0
-          fi
-          git rebase --abort || true
-          git reset --hard origin/main
-          git add .
-          git diff --staged --quiet && exit 0
-          git commit -m "Daily update (retry) [$(date +'%Y-%m-%d')]"
-          git push origin main
+<!-- START: Competitive Arbitrage Component -->
+<section id="transparency" style="background: #eef2f7; padding: 25px; border-radius: 12px; margin: 30px 0;">
+    <h3>The BrightLane Difference vs. Big Box Floral</h3>
+    <p>Searching for flower delivery in {{CITY_NAME}} often leads to "hidden fees" at the final checkout screen. Here is how we compare for May 10, 2026:</p>
+    
+    <table style="width: 100%; border-collapse: collapse; background: white;">
+        <tr style="border-bottom: 1px solid #eee;">
+            <th style="padding: 10px; text-align: left;">Feature</th>
+            <th style="padding: 10px;">FTD / ProFlowers</th>
+            <th style="padding: 10px; color: #004b98;">BrightLane</th>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">Service Fee</td>
+            <td style="padding: 10px; color: #888;">$15.00 - $24.99</td>
+            <td style="padding: 10px; font-weight: bold;">$0.00</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">Hand-Delivered</td>
+            <td style="padding: 10px; color: #888;">Often Boxed</td>
+            <td style="padding: 10px; font-weight: bold;">100% Guaranteed</td>
+        </tr>
+    </table>
+</section>
+<!-- END: Vulture Protocol Context Injection -->
