@@ -1,180 +1,122 @@
-#!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
 
-// =======================================================================
-// 3M‑PAGE FLOWER‑ORDERING EMPIRE
-// Every URL → 5,000+ words targeting:
-// "flowers", "flower delivery", "send flowers", "order flowers online",
-// "buy flowers", "same day flowers", "florist", "floral", "bouquet" + 1M+ variations
-// =======================================================================
+// ======================================================
+// CONFIG
+// ======================================================
 
 const BASE_URL = "https://brightlane.github.io/FtdFlowers/";
 const OUTPUT_DIR = path.join(__dirname, "output", "flower-pages");
-const SITEMAP_TXT = path.join(__dirname, "output", "sitemap.txt");
-const MAX_URLS = 3_000_000;  // 3 million pages
 
-// 1. Large keyword set (top 3M+ search themes adapted from keysearch/seopital)
-//  https://www.keysearch.co/top-keywords/florist-keywords
-//  https://www.seopital.co/blog/the-best-florist-seo-keywords
-const KEYWORDS = [
-  "flowers", "flower delivery", "send flowers", "send flowers online",
-  "order flowers online", "buy flowers online", "buy flowers", "order flowers",
-  "same-day flowers", "same day flower delivery", "flowers near me",
-  "florist near me", "florist", "flower shop", "flower shop near me",
-  "flowers online", "flower arrangements", "bouquet delivery", "bouquet shop",
-  "wedding flowers", "funeral flowers", "sympathy flowers", "birthday flowers",
-  "anniversary flowers", "get well flowers", "get well soon flowers",
-  "get flowers delivered", "flowers delivered to house", "flowers delivered today",
-  "local flower delivery", "local florist", "online flower delivery",
-  "online florist", "best online flower delivery", "best flower delivery",
-  "flower delivery service", "flower delivery company", "cheap flower delivery",
-  "cheap flowers", "luxury flower delivery", "fresh flowers",
-  "fresh flower delivery", "red roses", "roses online", "rose bouquet",
-  "mothers day flowers", "mothers day rose bouquet", "same day mothers day flowers",
-  "valentine flowers", "wedding floral arrangements", "sympathy floral arrangements",
-  "birthday floral arrangements", "anniversary bouquet", "bouquet of flowers",
-  "flowers by post", "letterbox flowers", "get flowers delivered today",
-  "send flowers today", "send someone flowers", "flowers sent to house",
-  "flowers to go", "flowers for mom", "flowers for boyfriend", "flowers for girlfriend",
-  "flowers for wife", "flowers for husband", "flowers for wife goodbye",
-  "flowers for him", "flowers for her", "flowers for teacher", "flowers for nurse",
-  "flowers for friend", "flowers for colleagues", "flowers for boss",
-  "flowers for apology", "flowers for thank you", "flowers for thinking of you",
-  "flowers for congratulations", "flowers for new baby", "flowers for new home",
-  "flowers for graduation", "flowers for retirement",
-  "flowers for hospital visit", "send flowers to hospital",
-  "flowers for funeral home", "flowers for grave", "condolence flowers",
-  "bereavement flowers", "flowers for sympathy card", "flowers for card message",
-  "flowers with card", "flowers with balloon", "flowers with chocolates"
-];
+// Ensure output folder exists
+if (!fs.existsSync(OUTPUT_DIR)) {
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+}
 
-// 2. Cities to target 3M combinations
-const CITIES = [
-  "new-york", "los-angeles", "chicago", "houston", "phoenix", "philadelphia",
-  "san-antonio", "san-diego", "dallas", "san-jose", "austin", "jacksonville",
-  "fort-worth", "columbus", "charlotte", "indianapolis", "san-francisco",
-  "seattle", "denver", "washington", "boston", "toronto", "montreal",
-  "vancouver", "calgary", "edmonton", "ottawa", "winnipeg", "london-on",
-  "hamilton", "quebec", "halifax", "kitchener", "london-uk", "birmingham-uk",
-  "manchester-uk", "glasgow-uk", "liverpool-uk", "london-on", "nottingham-uk",
-  "boston-ma", "atlanta-ga", "orlando-fl", "las-vegas-nv", "salt-lake-city-ut",
-  "minneapolis-mn", "milwaukee-wi", "kansas-city-mo", "st-louis-mo",
-  "portland-me", "portland-or", "boise-id", "tucson-az", "fresno-ca",
-  "sacramento-ca", "reno-nv", "eugene-or", "corvallis-ore", "atlanta",
-  "orlando", "tampa", "miama", "cleveland", "pittsburgh", "cincinnati",
-  "nashville", "memphis", "omaha", "lincoln", "des-moines", "buffalo",
-  "rochester-ny", "syracuse-ny", "baltimore", "columbus-oh", "indianapolis",
-  "louisville-ky", "nashville-tn", "charlotte-nc", "raleigh-nc", "greensboro-nc",
-  "wilmington-nc", "cincinnati", "columbus-oh", "tulsa-ok", "oklahoma-city-ok",
-  "kansas-city-mo", "st-louis-mo", "omaha-ne", "des-moines-ia", "lincoln-ne",
-  "fargo-nd", "bismarck-nd", "montgomery-al", "mobile-al", "selma-al",
-  "boston-0", "providence-ri", "hartford-ct", "london-uk", "manchester-uk",
-  "birmingham-uk", "glasgow-uk", "livertpool-uk", "milton-keynes-uk",
-  "london-on", "nottingham-uk", "sheffield-uk", "brighton-uk", "bristol-uk",
-  "edinburgh-uk", "dublin-ireland"
-];
+// ======================================================
+// DATA SETS
+// ======================================================
 
-// 3. Occasions (to match flower‑ordering intent)
-const OCCASIONS = [
-  "mothers-day", "fathers-day", "valentines", "anniversary", "wedding",
-  "birthday", "get-well", "sympathy", "funeral", "hospital",
-  "retirement", "graduation", "new-home", "new-baby",
-  "thank-you", "apology", "thinking-of-you", "congratulations",
-  "break-up-make-up", "baby-shower", "baptism", "christening",
-  "engagement", "housewarming", "thanksgiving", "christmas",
-  "easter", "hannukah", "ramadan", "diwali", "holi",
-  "chinese-new-year", "birthday-son", "birthday-daughter",
-  "birthday-boy", "birthday-girl"
-];
-
-// 4. Flowers / bouquet types
 const FLOWERS = [
-  "roses", "red-roses", "pink-roses", "white-roses",
-  "tulips", "pink-tulips", "yellow-tulips", "purple-tulips",
-  "lilies", "white-lilies", "pink-lilies", "orange-lilies",
-  "peonies", "pink-peonies", "white-peonies",
-  "sunflowers", "mixed-sunflowers", "mini-sunflowers",
-  "orchids", "phalaenopsis-orchids", "dendrobium-orchids",
-  "hydrangeas", "blue-hydrangeas", "pink-hydrangeas",
-  "daisies", "gerbera-daisies", "chrysanthemums",
-  "carnations", "white-carnations", "pink-carnations",
-  "snapdragons", "stock", "alstroemeria", "ranunculus",
-  "bouquet", "mixed-bouquet", "elegant-bouquet", "deluxe-bouquet",
-  "standard-bouquet", "simple-bouquet", "luxury-bouquet",
-  "wedding-bouquet", "funeral-bouquet", "hospital-bouquet",
-  "birthday-bouquet", "anniversary-bouquet"
+  "roses", "tulips", "lilies", "peonies", "orchids",
+  "sunflowers", "daisies", "carnations", "bouquet"
 ];
 
-// 5. Adjectives (order‑flowery‑style modifiers)
+const OCCASIONS = [
+  "mothers-day", "anniversary", "birthday",
+  "get-well", "sympathy", "wedding"
+];
+
 const ADJECTIVES = [
-  "same-day", "next-day", "express", "over-night",
-  "premium", "luxury", "elegant", "professional",
-  "romantic", "romantic-delivery", "small", "medium",
-  "large", "extra-large", "mini", "huge",
-  "fresh", "super-fresh", "long-lasting", "hand-picked",
-  "hand-delivered", "hand-crafted", "artisan", "gourmet",
-  "private", "personal", "personalized", "customized",
-  "gift-ready", "surprise", "fast", "same-afternoon",
-  "today", "express-checkout", "instant-delivery", "just-in-time",
-  "last-minute", "emergency", "rush-delivery", "priority-delivery",
-  "low-cost", "value", "budget", "cheap",
-  "high-end", "premium-deluxe", "bespoke", "exclusive",
-  "farm-fresh", "local", "local-florist", "local-delivery",
-  "country", "urban", "suburban", "canadian", "united-states"
+  "same-day", "premium", "luxury", "fresh",
+  "express", "hand-delivered", "local"
 ];
 
-// 6. Personas (helps AI understand user intent)
 const PERSONAS = [
-  "busy-mom", "busy-dad", "college-student", "teacher",
-  "nurse", "doctor", "office-worker", "corporate",
-  "celebrity", "influencer", "small-business-owner", "remote-worker",
-  "stay-at-home-parent", "freelancer", "entrepreneur", "student",
-  "senior-citizen", "international-student", "expat",
-  "international-visitor", "tourist", "sport-athlete",
-  "professional-athlete", "rapper", "rock-star", "bard",
-  "younger-brother", "older-sister", "colleague", "manager",
-  "CTO", "CEO", "salesperson", "marketer", "engineer",
-  "designer", "creative-director"
+  "busy-mom", "student", "office-worker", "nurse", "doctor"
 ];
 
-// 7. Generate 5,000+ words of unique content per URL
-function generate5kContent(url, baseHtmlAboveFold = "") {
-  // 7.1 Parse slug parts
-  const parts = url.replace(BASE_URL, "").split("/").pop().split(".")[0].split("-");
-  const city = parts[parts.length - 1];
+// ======================================================
+// SLUG
+// ======================================================
 
-  let flower = "";
-  let occasion = "";
-  let adj = "";
-  let persona = "";
+const SLUG = "same-day-roses-order-flowers-online-new-york";
+
+// ======================================================
+// HTML GENERATOR
+// ======================================================
+
+function generate5kHtml(slug) {
+  const parts = slug.split("-");
+
+  let flower = "roses";
+  let occasion = "order-flowers-online";
+  let city = "new-york";
 
   for (const p of parts) {
     if (FLOWERS.includes(p)) flower = p;
     if (OCCASIONS.includes(p)) occasion = p;
-    if (ADJECTIVES.includes(p)) adj = p;
-    if (PERSONAS.includes(p)) persona = p;
+    if (p === "new" || p === "york") city = "new-york";
   }
-  if (!flower) flower = FLOWERS[0];
-  if (!occasion) occasion = OCCASIONS[0];
-  if (!adj) adj = ADJECTIVES[0];
-  if (!persona) persona = PERSONAS[0];
 
-  const cityWords = city.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const occWords = occasion.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const flowerWords = flower.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const adjWords = adj.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const personaWords = persona.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const cityWords = city.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  const flowerWords = flower.replace(/\b\w/g, c => c.toUpperCase());
+  const occWords = occasion.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 
-  const normalizedRootKeyword = `order-flowers-online`;
-  const rootKeyword = normalizedRootKeyword.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const mainKeyword = `${adjWords} ${flowerWords} ${occWords} ${normalizedRootKeyword} ${cityWords}`;
-  const mainKwReadable = `Order ${flowerWords} ${occWords} flowers online in ${cityWords}`;
-
-  // 7.2 Dense but natural 5K‑word body text
+  const title = `Same Day ${flowerWords} Order Flowers Online ${cityWords}`;
 
   const intro = `
-<p>
-  <strong>1. ${mainKwReadable} with ${adjWords} ${flowerWords} ${occWords} bouquets</strong><br>
-  In ${cityWords}, families, hospitals, offices, and funeral homes all rely on a fast way to <strong>${mainKeyword}</strong> for emotional moments.
-  Whether celebrating a birthday, sending sympathy, or arranging a wedding bouquet, people need to <strong>order flowers online</strong> with clear pricing, fast turnaround, and local 
+<section>
+  <h1>${title}</h1>
+  <p>
+    Order ${flowerWords} online in ${cityWords} for ${occWords}.
+    This page explains how to send flowers, buy bouquets, and arrange same-day delivery
+    using local florist networks in ${cityWords}.
+  </p>
+</section>
+`;
+
+  const body = `
+<section>
+  <h2>Flower Delivery in ${cityWords}</h2>
+  <p>
+    Customers in ${cityWords} frequently order ${flowerWords} for birthdays, anniversaries,
+    and sympathy occasions. Same-day delivery ensures flowers arrive fresh and on time.
+  </p>
+
+  <p>
+    Florists prepare arrangements locally, ensuring high quality and fast delivery across
+    ${cityWords} neighborhoods.
+  </p>
+</section>
+`;
+
+  const fullHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <meta name="description" content="Order ${flowerWords} online in ${cityWords} with same-day delivery from local florists.">
+</head>
+<body>
+  ${intro}
+  ${body}
+</body>
+</html>
+`;
+
+  return fullHtml;
+}
+
+// ======================================================
+// WRITE FILE
+// ======================================================
+
+const html = generate5kHtml(SLUG);
+
+const filePath = path.join(OUTPUT_DIR, `${SLUG}.html`);
+fs.writeFileSync(filePath, html);
+
+console.log("✅ PAGE CREATED:", filePath);
+console.log("🌐 READY URL:", BASE_URL + SLUG + ".html");
