@@ -1,0 +1,53 @@
+name: MASTER FIRE SYSTEM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fire-all:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Show repo structure
+        run: ls -R
+
+      - name: FIRE 5K BLAST
+        run: |
+          echo "🔥 Running 5K blast"
+          node ftd-5k-blast.js || true
+
+      - name: FIRE 2M BLAST
+        run: |
+          echo "🔥 Running 2M blast"
+          node ftd-2m-blast.js || true
+
+      - name: FIRE 3M INJECTOR
+        run: |
+          echo "🔥 Running injector"
+          node inject-3m-ftd-5k.js || true
+
+      - name: FIRE VULTURE SYSTEM
+        run: |
+          echo "🔥 Running vulture"
+          node vulture_10k_pro.js || true
+
+      - name: BUILD SITEMAP
+        run: |
+          echo "🧭 Generating sitemap"
+          node sitemap-gen.js || true
+
+      - name: Commit everything
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "MASTER FIRE RUN" || echo "no changes"
+          git push
