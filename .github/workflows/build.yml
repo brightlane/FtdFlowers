@@ -1,0 +1,43 @@
+name: Build FTD Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      # 🔥 THIS is where your generator MUST be called
+      - name: Run generator
+        run: node vulture_10k_pro.js
+
+      # OR if you have multiple generators:
+      # run: |
+      #   node inject-3m-ftd-5k.js
+      #   node sitemap-gen.js
+
+      - name: Show output (debug)
+        run: ls -R
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add dist output sitemap.xml blog || true
+          git commit -m "auto build" || exit 0
+          git push
