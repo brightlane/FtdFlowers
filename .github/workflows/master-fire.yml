@@ -1,53 +1,72 @@
-name: MASTER FIRE SYSTEM
+name: MASTER FIRE PAGE GENERATOR
 
 on:
   workflow_dispatch:
 
 jobs:
-  fire-all:
+  build-pages:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # 1. Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Node
+      # 2. Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3. Debug repo state
       - name: Show repo structure
-        run: ls -R
-
-      - name: FIRE 5K BLAST
         run: |
-          echo "🔥 Running 5K blast"
+          echo "📂 Repo structure:"
+          ls -R
+
+      # 4. RUN ALL PAGE GENERATORS
+      - name: Generate FTD Pages
+        run: |
+          echo "🔥 Running FTD generator..."
           node ftd-5k-blast.js || true
-
-      - name: FIRE 2M BLAST
-        run: |
-          echo "🔥 Running 2M blast"
-          node ftd-2m-blast.js || true
-
-      - name: FIRE 3M INJECTOR
-        run: |
-          echo "🔥 Running injector"
           node inject-3m-ftd-5k.js || true
+          node inject-ftd-locally.js || true
 
-      - name: FIRE VULTURE SYSTEM
+      - name: Generate Blog Pages
         run: |
-          echo "🔥 Running vulture"
-          node vulture_10k_pro.js || true
+          echo "📝 Running blog generator..."
+          node generate-daily-blog.js || true
 
-      - name: BUILD SITEMAP
+      - name: Generate Sitemap
         run: |
-          echo "🧭 Generating sitemap"
+          echo "🧭 Generating sitemap..."
           node sitemap-gen.js || true
 
-      - name: Commit everything
+      # 5. VERIFY OUTPUT (IMPORTANT)
+      - name: Check generated files
+        run: |
+          echo "=== BLOG ==="
+          ls -R blog || echo "No blog folder"
+
+          echo "=== ROOT FILES ==="
+          find . -name "*.html"
+
+      # 6. COMMIT ALL GENERATED PAGES (THIS WAS MISSING BEFORE)
+      - name: Commit generated pages
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+
           git add .
-          git commit -m "MASTER FIRE RUN" || echo "no changes"
+
+          git commit -m "🔥 MASTER FIRE: generated pages" || echo "No changes to commit"
+
           git push
+
+      # 7. FINAL STATUS
+      - name: Final status
+        run: |
+          git status
+          git log -1
