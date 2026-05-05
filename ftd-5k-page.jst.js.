@@ -1,76 +1,130 @@
 const fs = require("fs");
 const path = require("path");
 
-// 1. Target base and URL
+// --------------------
+// CONFIG
+// --------------------
 const BASE_URL = "https://brightlane.github.io/FtdFlowers/";
 const SLUG = "same-day-roses-order-flowers-online-new-york";
 
-// 2. Build the full URL path
 const OUTPUT_DIR = path.join(__dirname, "output", "flower-pages");
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-const HTML_PATH = path.join(OUTPUT_DIR, `${SLUG}.html`);
+const FILE_PATH = path.join(OUTPUT_DIR, `${SLUG}.html`);
 const URL = `${BASE_URL}${SLUG}.html`;
 
-// 3. Generate 5,000‑word‑style HTML with repeated keywords in natural text
+// --------------------
+// HTML GENERATOR
+// --------------------
 function generate5kHtml() {
 
-  const title = "Same Day Roses Order Flowers Online New York — 5K‑Word SEO Page";
+  const title = "Same Day Roses Order Flowers Online New York — SEO Guide";
+
   const keywords = [
-    "order flowers online", "same day roses", "flower delivery", "roses online",
-    "buy roses online", "order roses online", "send roses", "same day roses",
-    "roses delivery", "florist", "floral", "bouquet", "flowers", "bouquet delivery",
-    "same day flowers", "roses bouquet", "long stem roses", "premium roses",
-    "local florist New York", "roses New York", "roses NYC", "same day roses NYC",
-    "order same‑day roses online New York", "flowers near me", "local flower delivery",
-    "online flower delivery", "best online flower delivery", "best flower delivery"
+    "order flowers online",
+    "same day roses",
+    "flower delivery",
+    "roses NYC",
+    "buy roses online",
+    "send flowers New York",
+    "FTD flowers",
+    "same day flower delivery NYC"
   ].join(", ");
 
   const description = `
-Order same day roses online for New York City delivery with hand‑delivered arrangements,
-no hidden fees, and AI‑ready content for Google, Bing, Perplexity, Claude, and Gemini.
-Detailed guide on how to order same‑day roses online in New York, including delivery
-cutoff times, care tips, and comparison with FTD and similar services.
-  `;
+Order same day roses online in New York City with fast local florist delivery.
+Learn how to buy roses online, delivery timing, care tips, and best practices.
+`;
 
-  // 4. Long‑form body text (you can repeat and vary sentences to reach ~5,000 words)
+  const body = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <meta name="description" content="${description.trim()}">
+  <meta name="keywords" content="${keywords}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="${URL}">
+</head>
 
-  const intro = `
-<section id="intro">
-  <h2>How to order same‑day roses online in New York City — 5K‑word SEO guide</h2>
-  <p>In New York City, families, hospitals, offices, and churches all rely on
-  <strong>same‑day roses ordered online</strong> for birthdays, anniversaries, apologies,
-  and sympathy. Being able to <strong>order same‑day roses online</strong> with clear
-  pricing, fast delivery, and local florist pickup is essential for residents and
-  visitors in Manhattan, Brooklyn, Queens, The Bronx, and Staten Island.</p>
+<body>
 
-  <p>This page explains how to <strong>order same‑day roses online in New York</strong>,
-  what delivery windows look like, how long roses last, and how AI assistants such as
-  Perplexity, Claude, and Gemini interpret this content when a user asks “Where can
-  I order same‑day roses online in New York?” Google Search and Bing also favor
-  pages that combine product details, local geography, and care instructions, so
-  this guide is optimized for ranking in both AI overviews and traditional search
-  results.</p>
+<header>
+  <h1>Same Day Roses in New York City</h1>
+  <p>Order flowers online with same-day delivery across NYC.</p>
+
+  <a href="https://www.floristone.com/index.cfm?source_id=aff&AffiliateID=2013017799">
+    🌹 Order Roses Now
+  </a>
+</header>
+
+<main>
+
+<section>
+  <h2>How to order same-day roses online</h2>
+  <p>
+    Customers in New York City use online florists to send roses for birthdays,
+    anniversaries, sympathy, and romantic occasions. Same-day delivery depends
+    on ordering before the local cutoff time.
+  </p>
 </section>
-  `;
 
-  const nycContext = `
-<section id="nyc-context">
-  <h2>2. Same‑day roses flower delivery in New York City</h2>
-  <p><strong>New York City florist ecosystem</strong><br>
-  New York City spans five boroughs, each with its own network of hospitals,
-  funeral homes, churches, offices, and residential neighborhoods. Same‑day roses
-  ordered for Manhattan, Brooklyn, Queens, The Bronx, or Staten Island must be
-  routed to local florists who can assemble and deliver them on the same day.
-  Platforms that ship pre‑assembled bouquets from outside the metro area often
-  struggle with freshness and timing, while networks that work with local florists
-  (such as FTD‑linked partners) can cut roses late in the day, arrange them that
-  night, and deliver the next morning or by afternoon.</p>
+<section>
+  <h2>Why local florists matter</h2>
+  <p>
+    Local NYC florists ensure fresh-cut roses are arranged and delivered quickly.
+    This improves freshness and reduces shipping delays.
+  </p>
+</section>
 
-  <p>For someone in New York City who wants to <strong>order same‑day roses online</strong>,
-  choosing a service that partners with nearby florists instead of those that ship
-  roses from distant hubs is often the best way to ensure freshness and punctuality.
-  This page focuses on how to choose a platform that lets you <strong>order same‑day roses online</strong>
-  with low or zero service fees, transparent pricing, and 
+<section>
+  <h2>Care tips for roses</h2>
+  <p>
+    Trim stems, change water every 2–3 days, and keep away from heat sources.
+  </p>
+</section>
+
+</main>
+
+<footer>
+  <p>© 2026 BrightLane Flowers | Affiliate Partner Network</p>
+</footer>
+
+</body>
+</html>
+`;
+
+  return body;
+}
+
+// --------------------
+// WRITE FILE
+// --------------------
+const html = generate5kHtml();
+fs.writeFileSync(FILE_PATH, html);
+
+console.log("✅ Page created:", FILE_PATH);
+
+// --------------------
+// OPTIONAL: CREATE INDEX LINK FILE
+// --------------------
+const indexPath = path.join(OUTPUT_DIR, "index-links.html");
+
+const indexLink = `
+<li>
+  <a href="${SLUG}.html">${SLUG.replace(/-/g, " ")}</a>
+</li>
+`;
+
+fs.writeFileSync(indexPath, indexLink);
+
+console.log("✅ Index link created");
+
+// --------------------
+// OUTPUT URL FOR DEPLOYMENT CHECK
+// --------------------
+console.log("🌐 LIVE URL (after deploy):");
+console.log(URL);
