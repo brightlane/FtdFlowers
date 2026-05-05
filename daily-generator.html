@@ -1,28 +1,81 @@
-// Add this to your DATA POOLS section
+const fs = require("fs");
+const path = require("path");
+
+const OUTPUT_DIR = path.join(__dirname, "dist");
+
 const SEO_KW_STRATEGY = {
-    "Birthday": ["same day birthday delivery {city}", "best birthday florist {city}", "birthday flowers for her"],
-    "Sympathy": ["funeral flowers {city}", "sympathy delivery {city}", "condolence bouquet"],
-    "BestSellers": ["best selling flowers {city}", "top rated florist {city}", "popular bouquets"]
+  Birthday: ["same day birthday delivery {city}", "best birthday florist {city}", "birthday flowers for her"],
+  Sympathy: ["funeral flowers {city}", "sympathy delivery {city}", "condolence bouquet"],
+  BestSellers: ["best selling flowers {city}", "top rated florist {city}", "popular bouquets"]
 };
 
-// ── GENERATION LOGIC FOR THE "SEO" TAB
-function generateSEO(dateObj, city, occasion) {
-    const keywords = SEO_KW_STRATEGY[occasion.name] || SEO_KW_STRATEGY["BestSellers"];
-    const kwHtml = keywords.map(k => `<span class="kw">${k.replace('{city}', city)}</span>`).join('');
-    
-    document.getElementById('seo-keywords').innerHTML = kwHtml;
-    
-    // Direct Affiliate Link with your AID 2013017799
-    const link = `https://www.floristone.com/main.cfm?affiliate_id=2013017799&source_id=aff&occ=${occasion.occ}`;
-    document.getElementById('seo-link').innerText = link;
-    
-    // Schema logic
-    const schema = {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": `${occasion.name} Flowers in ${city}`,
-        "description": `Order ${occasion.name} flowers for delivery in ${city}. Same-day available.`,
-        "url": link
-    };
-    document.getElementById('seo-schema').innerText = JSON.stringify(schema, null, 2);
+const CITIES = ["new-york", "los-angeles", "chicago", "toronto", "vancouver"];
+const OCCASIONS = [
+  { name: "Birthday", occ: "bk" },
+  { name: "Sympathy", occ: "sy" },
+  { name: "BestSellers", occ: "bs" }
+];
+
+function generateDailyPages() {
+  console.log("🦅 DAILY SEO GEN STARTING...");
+
+  const today = new Date().toISOString().split("T")[0];
+
+  for (const city of CITIES) {
+    for (const occasion of OCCASIONS) {
+
+      const keywords = SEO_KW_STRATEGY[occasion.name] || SEO_KW_STRATEGY["BestSellers"];
+
+      const kwHtml = keywords
+        .map(k => `<li>${k.replace("{city}", city)}</li>`)
+        .join("\n");
+
+      const affiliateLink =
+        `https://www.floristone.com/main.cfm?affiliate_id=2013017799&source_id=aff&occ=${occasion.occ}`;
+
+      const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${occasion.name} Flowers in ${city}</title>
+  <meta name="description" content="Send ${occasion.name} flowers in ${city}. Same-day delivery available.">
+</head>
+<body style="font-family:Arial;background:#0b0f19;color:white;padding:40px">
+
+  <h1>${occasion.name} Flowers in ${city}</h1>
+  <p>Updated: ${today}</p>
+
+  <h3>SEO Keywords</h3>
+  <ul>
+    ${kwHtml}
+  </ul>
+
+  <h3>Order Now</h3>
+  <a href="${affiliateLink}" style="color:#ff4757">
+    ${affiliateLink}
+  </a>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "${occasion.name} Flowers in ${city}",
+    "description": "Order ${occasion.name} flowers for delivery in ${city}.",
+    "url": "${affiliateLink}"
+  }
+  </script>
+
+</body>
+</html>
+`;
+
+      const fileName = `${city}-${occasion.name.toLowerCase()}-${today}.html`;
+
+      fs.writeFileSync(path.join(OUTPUT_DIR, fileName), html);
+    }
+  }
+
+  console.log("✅ Daily SEO pages generated in /dist");
 }
+
+generateDailyPages();
