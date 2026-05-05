@@ -1,0 +1,18 @@
+# FtdFlowers/_config.yml
+title: FTD Flowers for Sympathy, Funeral, Get‑Well & Any Holiday
+baseurl: ""
+url: "https://brightlane.github.io/FtdFlowers"
+
+# allow Jekyll to serve raw .html from the pages/ folder
+include:
+  - "pages"
+
+permalink: /:title
+
+# optional: skip processing for static FTD pages
+defaults:
+  - scope:
+      path: "pages"
+    values:
+      layout: none
+      sitemap: false
