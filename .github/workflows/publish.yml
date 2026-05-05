@@ -1,20 +1,20 @@
-name: Full SEO Publisher
+name: Reliable SEO Publisher
 
 on:
   schedule:
-    - cron: "* * * * *"   # every minute
+    - cron: "* * * * *"
   workflow_dispatch:
 
 concurrency:
-  group: seo-pipeline
-  cancel-in-progress: false
+  group: seo-pipeline-lock
+  cancel-in-progress: true
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -22,52 +22,13 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm install || true
-
-      # ----------------------------
-      # 1. CORE PAGE GENERATION
-      # ----------------------------
-      - name: Run main publisher
+      - name: Run FULL pipeline (SAFE ORDER)
         run: node publish.js
 
-      # ----------------------------
-      # 2. BLOG SYSTEM
-      # ----------------------------
-      - name: Generate blogs
-        run: node generate-daily-blog.js || true
-
-      # ----------------------------
-      # 3. SEO ENGINE / INDEXING
-      # ----------------------------
-      - name: Run SEO engine
-        run: node seo-engine/index.js || true
-
-      # ----------------------------
-      # 4. INDEX SUBMISSION
-      # ----------------------------
-      - name: IndexNow / submission
-        run: node index-blast.js || true
-
-      # ----------------------------
-      # 5. BACKLINK / FOOTER SYSTEM
-      # ----------------------------
-      - name: Inject backlinks
-        run: node backlink_injector.js || true
-
-      # ----------------------------
-      # 6. SITEMAP REBUILD
-      # ----------------------------
-      - name: Rebuild sitemaps
-        run: node sitemap-gen.js || true
-
-      # ----------------------------
-      # 7. COMMIT + DEPLOY
-      # ----------------------------
-      - name: Commit and push
+      - name: Force commit if changes exist
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add .
-          git commit -m "auto full pipeline $(date -u)" || echo "No changes"
+          git add -A
+          git commit -m "auto publish $(date -u)" || echo "no changes"
           git push
