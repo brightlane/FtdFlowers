@@ -1,58 +1,42 @@
 const fs = require("fs");
 const path = require("path");
 
-const FT_DIR = path.join(__dirname, "FtdFlowers");
-const BLOG_DIR = path.join(__dirname, "blog");
+const DIR = path.join(__dirname, "dist");
 
-function getFiles(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir)
-    .filter(f => f.endsWith(".html"))
-    .map(f => ({
-      name: f,
-      path: dir.includes("FtdFlowers")
-        ? `FtdFlowers/${f}`
-        : `blog/${f}`
-    }));
+const files = fs.readdirSync(DIR).filter(f => f.endsWith(".html") && f !== "index.html");
+
+let links = "";
+
+for (const file of files) {
+  const name = file
+    .replace(".html", "")
+    .replace(/-/g, " ");
+
+  links += `<li><a href="./${file}">${name}</a></li>\n`;
 }
 
-function buildList(title, files) {
-  return `
-  <section>
-    <h2>${title}</h2>
-    <ul>
-      ${files.map(f => `<li><a href="${f.path}">${f.name}</a></li>`).join("\n")}
-    </ul>
-  </section>
-  `;
-}
-
-function run() {
-  const ftdFiles = getFiles(FT_DIR);
-  const blogFiles = getFiles(BLOG_DIR);
-
-  const html = `
+const html = `
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FTD Flowers Index</title>
-  <meta name="description" content="Auto-generated index of flower delivery pages" />
+  <title>FTD Flower Network Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; background:#0b0f19; color:white; padding:40px; }
+    a { color:#ff4757; text-decoration:none; }
+    li { margin:8px 0; }
+  </style>
 </head>
 <body>
-
-<h1>🌸 BrightLane Generated Pages Index</h1>
-
-${buildList("FTD Pages", ftdFiles)}
-
-${buildList("Blog Pages", blogFiles)}
-
+  <h1>🌸 FTD Flower Pages Index</h1>
+  <p>Total Pages: ${files.length}</p>
+  <ul>
+    ${links}
+  </ul>
 </body>
 </html>
-  `;
+`;
 
-  fs.writeFileSync(path.join(__dirname, "index.html"), html);
+fs.writeFileSync(path.join(DIR, "index.html"), html);
 
-  console.log("✅ index.html generated with all links");
-}
-
-run();
+console.log("✅ index.html generated with all links");
