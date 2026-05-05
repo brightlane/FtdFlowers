@@ -18,18 +18,27 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Show working directory (debug)
+      - name: Debug environment
         run: |
+          echo "=== WORKDIR ==="
           pwd
-          ls -la
+          echo "=== FILE LIST ==="
+          ls -R
+          echo "=== NODE VERSION ==="
+          node -v
 
-      - name: Run FTD Injector
+      - name: Run injector (verbose)
         run: |
-          echo "🚀 Starting FTD 5K Injector..."
-          node inject-and-deploy-ftd.js
+          echo "🚀 Starting injector..."
+          node inject-and-deploy-ftd.js || {
+            echo "❌ SCRIPT FAILED"
+            exit 1
+          }
           echo "✅ Injector finished"
 
-      - name: Show repo status
+      - name: Git debug
         run: |
+          echo "=== GIT STATUS ==="
           git status
+          echo "=== LAST COMMIT ==="
           git log -1
