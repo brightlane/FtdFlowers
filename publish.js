@@ -2,15 +2,17 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-// -------------------- CONFIG --------------------
+// ---------------- CONFIG ----------------
 const OUTPUT_DIR = path.join(__dirname, "FtdFlowers");
-
 const BATCH_SIZE = 20;
 
 const AFFILIATE_URL =
   "http://www.floristone.com/index.cfm?affiliateId=2013017799&sourceId=aff&tag=BrightLane_MothersDay_2026";
 
-// -------------------- KEYWORDS --------------------
+// signature to detect OUR pages
+const SIGNATURE = "<!-- GENERATED_BY_PUBLISH_JS_V2 -->";
+
+// keywords (expand this later)
 const keywords = [
   "flower delivery chicago",
   "same day flowers new york",
@@ -34,7 +36,7 @@ const keywords = [
   "fresh flowers washington dc"
 ];
 
-// -------------------- CURSOR SYSTEM --------------------
+// ---------------- CURSOR ----------------
 function loadCursor() {
   try {
     return JSON.parse(fs.readFileSync("cursor.json", "utf8"));
@@ -47,117 +49,137 @@ function saveCursor(cursor) {
   fs.writeFileSync("cursor.json", JSON.stringify(cursor, null, 2));
 }
 
-function getBatch(keywords, batchSize) {
+function getBatch() {
   const cursor = loadCursor();
-
   const start = cursor.index;
-  const end = start + batchSize;
+  const end = start + BATCH_SIZE;
 
   let batch = keywords.slice(start, end);
 
-  // wrap around logic
-  if (end >= keywords.length) {
-    cursor.index = 0;
-  } else {
-    cursor.index = end;
-  }
-
+  cursor.index = end >= keywords.length ? 0 : end;
   saveCursor(cursor);
 
   return batch;
 }
 
-// -------------------- UTIL --------------------
+// ---------------- UTIL ----------------
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-// -------------------- HTML GENERATOR --------------------
-function generateHTML(keyword) {
-  let content = "";
+// ---------------- STRONG CONTENT GENERATOR ----------------
+function generateLongContent(keyword) {
+  let sections = "";
 
-  for (let i = 0; i < 25; i++) {
-    content += `
+  for (let i = 0; i < 60; i++) {
+    sections += `
+      <h2>${keyword} Guide Section ${i + 1}</h2>
       <p>
-        ${keyword} is available for fast local delivery.
-        Fresh arrangements are designed for same-day service depending on availability.
+        ${keyword} is one of the most searched floral delivery services.
+        This section explains how customers choose arrangements, delivery timing,
+        and how local florists fulfill orders efficiently across regions.
+      </p>
+      <p>
+        When selecting ${keyword}, buyers typically evaluate freshness,
+        delivery reliability, and occasion-specific arrangements such as
+        birthdays, anniversaries, and sympathy flowers.
       </p>
     `;
   }
 
+  return sections;
+}
+
+// ---------------- HTML BUILDER ----------------
+function buildHTML(keyword) {
   return `
 <!DOCTYPE html>
 <html>
 <head>
   <title>${keyword} | BrightLane Flowers</title>
-  <meta name="description" content="${keyword} with fast local flower delivery." />
+  <meta name="description" content="${keyword} with premium same-day delivery options." />
 </head>
 
 <body>
 
-  <header>
-    <h1>${keyword}</h1>
-    <p>Fresh flowers delivered locally.</p>
-  </header>
+${SIGNATURE}
 
-  <section>
-    ${content}
-  </section>
+<h1>${keyword}</h1>
 
-  <footer>
-    <a href="${AFFILIATE_URL}" target="_blank">
-      Order Flowers via Partner Network
-    </a>
-  </footer>
+${generateLongContent(keyword)}
+
+<footer>
+  <a href="${AFFILIATE_URL}" target="_blank">
+    Order Flowers Now
+  </a>
+</footer>
 
 </body>
 </html>
-  `;
+`;
 }
 
-// -------------------- WRITE FILES --------------------
+// ---------------- CONTENT ENFORCER ----------------
+function enforcePage(filePath, keyword) {
+  let needsRewrite = true;
+
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, "utf8");
+
+    const wordCount = content.split(/\s+/).length;
+
+    // if already strong and ours → keep
+    if (content.includes(SIGNATURE) && wordCount > 3000) {
+      needsRewrite = false;
+    }
+  }
+
+  if (needsRewrite) {
+    fs.writeFileSync(filePath, buildHTML(keyword));
+    console.log("🔥 Overwritten with strong content:", filePath);
+  } else {
+    console.log("✅ Strong page already exists:", filePath);
+  }
+}
+
+// ---------------- WRITE ----------------
 function writeBatch(batch) {
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
-  batch.forEach((keyword) => {
-    const fileName = slugify(keyword) + ".html";
-    const filePath = path.join(OUTPUT_DIR, fileName);
-
-    fs.writeFileSync(filePath, generateHTML(keyword));
-    console.log("Created:", filePath);
+  batch.forEach((kw) => {
+    const file = path.join(OUTPUT_DIR, slugify(kw) + ".html");
+    enforcePage(file, kw);
   });
 }
 
-// -------------------- DEPLOY --------------------
+// ---------------- DEPLOY ----------------
 function deploy() {
   try {
     execSync("git add .", { stdio: "inherit" });
 
     execSync(
-      `git commit -m "Auto publish batch ${new Date().toISOString()}" || echo "No changes"`,
+      `git commit -m "🔥 strong publish ${new Date().toISOString()}" || echo "No changes"`,
       { stdio: "inherit" }
     );
 
     execSync("git push origin main", { stdio: "inherit" });
-
-    console.log("🚀 Deployed to GitHub Pages");
-  } catch (e) {
-    console.log("Deploy completed (no changes or conflict)");
+  } catch {
+    console.log("Deploy complete");
   }
 }
 
-// -------------------- MAIN --------------------
+// ---------------- MAIN ----------------
 function run() {
-  const batch = getBatch(keywords, BATCH_SIZE);
+  const batch = getBatch();
 
   console.log("Publishing batch:", batch);
 
   writeBatch(batch);
   deploy();
 
-  console.log("✅ Publish complete");
+  console.log("🚀 Strong publish complete");
 }
 
 run();
