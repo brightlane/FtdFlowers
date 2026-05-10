@@ -1,0 +1,237 @@
+// gen-bloomatlas-ftd.js
+// BloomAtlas Runner – FTD Flowers USA & Canada Edition
+// 100k new pages, new URLs, new content, FTD only (US + Canada)
+// 100% ready to deploy; reads affiliate.json for FTD config
+
+const fs = require("fs/promises");
+const path = require("path");
+const Anthropic = require("@anthropic-ai/sdk");
+
+// ── GLOBAL ERROR HANDLING ────────────────────────────────────
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1);
+});
+process.on("unhandledRejection", (reason, p) => {
+  console.error("Unhandled Rejection at:", p, "reason:", reason);
+  process.exit(1);
+});
+
+// ── LOAD AFFILIATE CONFIG FROM FILE ──────────────────────────
+async function loadConfig() {
+  const raw = await fs.readFile("affiliate.json", "utf-8");
+  const data = JSON.parse(raw);
+  return data;
+}
+
+// ── RUN MAIN ─────────────────────────────────────────────────
+async function main() {
+  const affiliateData = await loadConfig();
+  const CONFIG = {
+    network: affiliateData.network,
+    campaign: affiliateData.campaign,
+    urls: affiliateData.urls,
+    locales: affiliateData.locales,
+    occasions: affiliateData.occasions,
+
+    // Derived
+    homeDomain: affiliateData.urls.base.replace(/\/$/, ""), // strip trailing slash
+    brand: "FTD Atlas",
+    trackingTag: affiliateData.campaign.trackingTag,
+
+    // FTD main URL with tracking
+    // You can adjust affiliateLanding based on your exact FTD partner URL
+    ftdAffUrl: affiliateData.urls.affiliateLanding
+      ? affiliateData.urls.affiliateLanding +
+        `?utm_source=${affiliateData.network.name}&utm_medium=affiliate&utm_campaign=${affiliateData.campaign.trackingTag}`
+      : "https://www.ftd.com",
+
+    affiliateDisclosure:
+      "Affiliate disclosure: We may earn a commission from FTD Flowers if you order through our links, at no extra cost to you.",
+
+    concurrency: 2,
+    pageBatchDelay: 800,
+    maxRetries: 4,
+    retryBaseMs: 2000,
+
+    sitemapChunkSize: 50000,
+    totalPages: 100000,
+
+    usCities: affiliateData.locales.us,
+    caCities: affiliateData.locales.ca,
+
+    topics: [
+      "Mother's Day flowers",
+      "same‑day flower delivery",
+      "online flower delivery",
+      "birthday flower delivery",
+      "romantic rose bouquets",
+      "sympathy flowers",
+      "anniversary flowers",
+      "get‑well flowers",
+      "office flower delivery",
+      "grandparent gift flowers",
+    ],
+  };
+
+  const client = new Anthropic();
+
+  // ── RUN ID + PATH HELPERS ─────────────────────────────────────
+  function runId() {
+    const now = new Date();
+    return (
+      now.toISOString().replace(/:/g, "").replace(/\.\d+/, "") +
+      "-" +
+      Math.floor(100000 + Math.random() * 900000)
+    );
+  }
+
+  function runOutputDir(baseDir, id) {
+    return path.join(baseDir, "runs", id);
+  }
+
+  function slugify(str) {
+    return String(str)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function sleep(ms) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  // ── RATE‑LIMITED CLAUDE CALL ─────────────────────────────────
+  async function callClaude(prompt, maxTokens = 1200) {
+    for (let attempt = 0; attempt <= CONFIG.maxRetries; attempt++) {
+      try {
+        const msg = await client.messages.create({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: maxTokens,
+          messages: [{ role: "user", content: prompt }],
+        });
+        return msg.content[0]?.text || "";
+      } catch (err) {
+        const retryable =
+          err?.status === 429 || err?.status === 529 || err?.status >= 500;
+        if (retryable && attempt < CONFIG.maxRetries) {
+          const wait = CONFIG.retryBaseMs * Math.pow(2, attempt);
+          console.warn(
+            `  ⚠ API ${err?.status} — retrying in ${wait}ms (attempt ${
+              attempt + 1
+            }/${CONFIG.maxRetries})...`
+          );
+          await sleep(wait);
+        } else {
+          throw err;
+        }
+      }
+    }
+    throw new Error("All retry attempts exhausted");
+  }
+
+  // ── SEO HEAD TEMPLATE (per page) ──────────────────────────────
+  function seoHead(runId, { slug, title, description, type = "WebPage" }) {
+    const runSub = `run=${runId}`;
+    const baseUrl = `${CONFIG.homeDomain}/flowerguides`;
+    const url = `${baseUrl}/${runSub}/${slug}.html`;
+    const safeTitle = escHtml(title);
+    const safeDesc = escHtml(description);
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${safeTitle}</title>
+<meta name="description" content="${safeDesc}">
+<link rel="canonical" href="${url}">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+<meta property="og:title" content="${safeTitle}">
+<meta property="og:description" content="${safeDesc}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="${url}">
+<meta property="og:site_name" content="${escHtml(CONFIG.brand)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${safeTitle}">
+<meta name="twitter:description" content="${safeDesc}">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"${type}",
+  "name":"${safeTitle}",
+  "url":"${url}",
+  "publisher":{ 
+    "@type":"Organization",
+    "name":"${escHtml(CONFIG.brand)}",
+    "url":"${CONFIG.homeDomain}"
+  },
+  "dateModified":"${new Date().toISOString().split("T")[0]}"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"${CONFIG.homeDomain}/index.html"},
+    {"@type":"ListItem","position":2,"name":"${safeTitle.split(" | ")[0]}","item":"${url}"}
+  ]
+}
+</script>`;
+  }
+
+  // ── SIMPLE CCS (SEO‑friendly) ────────────────────────────────
+  function sharedStyles() {
+    return `
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#fff;color:#2d1a22;line-height:1.7}
+a{color:#C8295A;text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%}
+h2{font-size:1.5rem;color:#2d1a22;margin:1.2em 0 0.6em}
+h3{font-size:1.25rem;color:#2d1a22;margin:1em 0 0.5em}
+p{margin:0.6em 0;font-size:16px;line-height:1.7}
+ul{margin:0.6em 0 0.6em 1.5em;list-style: square}
+ol{margin:0.6em 0 0.6em 1.5em;list-style: decimal}
+li{margin:0.3em 0}
+section{margin-bottom:1em}
+.blockquote{border-left:3px solid #C8295A;padding:0.5em 1em;margin:0.8em 0;font-style:italic;background:#fdf0f4;border-radius:0 8px 8px 0}
+details{margin:0.6em 0;border-radius:6px;border:1px solid #f0d0da;padding:0.8em}
+details summary{font-weight:700;cursor:pointer}
+</style>`;
+  }
+
+  // ── NAV & FOOTER (with FTD link) ─────────────────────────────
+  function nav(runId) {
+    const runSub = `run=${runId}`;
+    const baseUrl = `${CONFIG.homeDomain}/flowerguides`;
+
+    return `<nav style="background:#fff;border-bottom:1px solid #f0d0da;padding:0.8em 1.5em">
+  <a href="https://${CONFIG.homeDomain}/" style="font-weight:700;color:#2d1a22;text-decoration:none;font-size:15px">
+    ${escHtml(CONFIG.brand)}
+  </a>
+  <a href="${CONFIG.ftdAffUrl}" target="_blank" rel="nofollow sponsored" style="margin-left:1.5em;background:#C8295A;color:#fff;padding:0.5em 1em;border-radius:20px;font-size:14px;text-decoration:none">
+    Order FTD Flowers
+  </a>
+</nav>`;
+  }
+
+  function footer() {
+    const serviceFee = CONFIG.campaign.serviceFee;
+    const competitorFee = CONFIG.campaign.competitorFee;
+
+    return `<footer style="background:#2d1a22;color:#fff;padding:1.2em 1.5em;text-align:center;font-size:12px">
+  <div>
+    &copy; 2026 ${escHtml(CONFIG.brand)} &nbsp;•&nbsp;
+    Independent flower review site &nbsp;•&nbsp;
+    <a href="${CONFIG.ftdAff罡
