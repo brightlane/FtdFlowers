@@ -61,6 +61,25 @@
       color: #6b7280;
     }
   </style>
+
+  <!-- =========================
+       AFFILIATE CONFIG (GLOBAL)
+  ========================== -->
+  <script>
+    const AFFILIATE_ID = "2013017799";
+    const SOURCE_ID = "aff";
+
+    function aff(url) {
+      if (!url) return "";
+
+      // prevent duplicates
+      if (url.includes("AffiliateID=")) return url;
+
+      const sep = url.includes("?") ? "&" : "?";
+      return `${url}${sep}AffiliateID=${AFFILIATE_ID}&source_id=${SOURCE_ID}`;
+    }
+  </script>
+
 </head>
 
 <body>
@@ -70,7 +89,6 @@
 
   <div class="grid">
 
-    <!-- Example links (replace or auto-generate via build-index.js) -->
     <a class="card" href="./flower-delivery-new-york-ny.html">
       New York Flower Delivery
       <div class="tag">Same Day Roses • NYC</div>
